@@ -10,4 +10,10 @@
     - 串接git到https://github.com/13g7895123/promotion_optimize.git
     - 確認專案的程式碼在docker建構過程用volumn，不要用copy
     - 以上完成後接續完成下方第四點
-4. 請完成Phase1~2的開發
+4. 完成以下執行前事項
+    - 前端專案請寫入frontend資料夾
+    - 後端專案請寫入backend資料夾
+    - 每完成一個phase執行更新TODO.md的項目狀態，並且執行add commit push
+    - 每次執行前先確認TODO.md該項目的狀態，未執行的才執行
+    - 執行phase1~phase2的開發，並且後端使用backend-architecture-reviewer agent，前端使用ux-design-reviewer agent與frontend-ui-specialist agent進行前端設計與開發
+5. 請幫我修正網站伺服器改用nginx

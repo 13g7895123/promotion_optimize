@@ -1,0 +1,26 @@
+{
+  "name": "promotion-frontend",
+  "version": "1.0.0",
+  "description": "私人遊戲伺服器推廣平台前端",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "nuxt": "^3.12.0",
+    "vue": "^3.4.0",
+    "vue-router": "^4.4.0"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@pinia/nuxt": "^0.5.1",
+    "@vueuse/nuxt": "^10.11.0",
+    "element-plus": "^2.7.6",
+    "pinia": "^2.1.7"
+  }
+}

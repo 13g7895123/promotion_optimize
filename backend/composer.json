@@ -1,0 +1,42 @@
+{
+    "name": "promotion/backend",
+    "description": "私人遊戲伺服器推廣平台後端API",
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.1",
+        "codeigniter4/framework": "^4.4.0",
+        "firebase/php-jwt": "^6.8",
+        "predis/predis": "^2.2"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.21",
+        "mikey179/vfsstream": "^1.6",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Config\\": "app/Config/"
+        },
+        "exclude-from-classmap": [
+            "**/Database/Migrations/**"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Support\\": "tests/_support"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "post-update-cmd": [
+            "@composer dump-autoload"
+        ]
+    },
+    "support": {
+        "source": "https://github.com/13g7895123/promotion_optimize"
+    }
+}

@@ -13,30 +13,30 @@
 ### Sprint 1-2: 基礎架構與用戶管理 (2週)
 
 #### 後端開發 (CodeIgniter 4.x)
-- [ ] 專案環境建置與CI4框架配置
-- [ ] 資料庫設計與Migration建立
-  - [ ] 用戶表 (users)
-  - [ ] 角色權限表 (roles, permissions, user_roles)
-  - [ ] 伺服器基本表 (servers, server_settings)
-- [ ] JWT認證系統實作
-- [ ] 用戶管理API開發
-  - [ ] 註冊/登入/登出
-  - [ ] 個人資料管理
-  - [ ] 權限驗證中介軟體
-- [ ] API文檔初版 (Swagger/OpenAPI)
+- [x] 專案環境建置與CI4框架配置
+- [x] 資料庫設計與Migration建立
+  - [x] 用戶表 (users)
+  - [x] 角色權限表 (roles, permissions, user_roles)
+  - [x] 伺服器基本表 (servers, server_settings)
+- [x] JWT認證系統實作
+- [x] 用戶管理API開發
+  - [x] 註冊/登入/登出
+  - [x] 個人資料管理
+  - [x] 權限驗證中介軟體
+- [x] API文檔初版 (Swagger/OpenAPI)
 
 #### 前端開發 (Nuxt.js 3.x)
-- [ ] Nuxt.js專案建置與配置
-- [ ] UI框架選擇與安裝 (建議: Element Plus/Vuetify)
-- [ ] 路由規劃與版面配置
-- [ ] 認證狀態管理 (Pinia)
-- [ ] 登入/註冊頁面開發
-- [ ] 響應式導航選單
+- [x] Nuxt.js專案建置與配置
+- [x] UI框架選擇與安裝 (建議: Element Plus/Vuetify)
+- [x] 路由規劃與版面配置
+- [x] 認證狀態管理 (Pinia)
+- [x] 登入/註冊頁面開發
+- [x] 響應式導航選單
 
 #### DevOps
-- [ ] Docker Compose配置
-- [ ] MySQL & Redis容器設定
-- [ ] 開發環境部署腳本
+- [x] Docker Compose配置
+- [x] MySQL & Redis容器設定
+- [x] 開發環境部署腳本
 
 ### Sprint 3: 伺服器管理系統 (2週)
 
