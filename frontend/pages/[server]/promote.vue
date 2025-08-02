@@ -185,7 +185,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import QRCode from 'qrcode'
 import { 
@@ -199,6 +199,7 @@ const CountUp = defineAsyncComponent(() => import('~/components/effects/CountUp.
 
 // 路由和參數
 const route = useRoute()
+const router = useRouter()
 const serverCode = route.params.server as string
 const gameAccount = route.query.account as string
 

@@ -405,9 +405,9 @@ onUnmounted(() => {
 }
 
 .account-input :deep(.el-input__inner) {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(0, 212, 255, 0.5);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #000000;
   font-size: 1.1rem;
   padding: 0 15px;
   height: 50px;
@@ -419,7 +419,7 @@ onUnmounted(() => {
 }
 
 .account-input :deep(.el-input__inner)::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .submit-btn {
