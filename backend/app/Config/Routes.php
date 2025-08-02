@@ -186,6 +186,10 @@ $routes->group('api', ['namespace' => 'App\Controllers\API'], function ($routes)
 
     // Public short link redirects (no authentication required)
     $routes->get('r/(:alphanum)', 'PromotionController::track/$1');
+    
+    // Test endpoints (no authentication required)
+    $routes->get('test', 'TestController::index');
+    $routes->get('health', 'TestController::health');
 });
 
 /*
