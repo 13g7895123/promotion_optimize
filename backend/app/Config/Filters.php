@@ -27,6 +27,8 @@ class Filters extends BaseConfig
         'cors'          => \App\Filters\CORSFilter::class,
         'apiauth'       => \App\Filters\APIAuthFilter::class,
         'inputvalidation' => \App\Filters\InputValidationFilter::class,
+        'promotionsecurity' => \App\Filters\PromotionSecurityFilter::class,
+        'promotiontracking' => \App\Filters\PromotionTrackingFilter::class,
     ];
 
     /**
@@ -70,8 +72,25 @@ class Filters extends BaseConfig
                 'api/roles/*',
                 'api/permissions/*',
                 'api/servers/*',
+                'api/promotions/*',
+                'api/rewards/*',
+                'api/statistics/*',
                 'api/health',
                 'api/stats',
+            ]
+        ],
+        'promotionsecurity' => [
+            'before' => [
+                'api/promotions/*',
+                'api/rewards/*',
+                'api/statistics/*',
+            ]
+        ],
+        'promotiontracking' => [
+            'before' => [
+                'api/promotion/track/*',
+                'api/r/*',
+                'r/*',
             ]
         ],
         'cors' => [

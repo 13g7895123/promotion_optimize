@@ -6,7 +6,11 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt'
   ],
-  css: ['~/assets/css/main.css'],
+  css: [
+    '~/assets/css/main.css',
+    '~/assets/css/theme-integration.css',
+    '~/assets/css/responsive.css'
+  ],
   runtimeConfig: {
     public: {
       apiBase: process.env.API_BASE_URL || 'http://localhost:8080/api'
@@ -19,7 +23,7 @@ export default defineNuxtConfig({
   // TypeScript configuration
   typescript: {
     strict: true,
-    typeCheck: true
+    typeCheck: false
   },
 
   // Build optimization

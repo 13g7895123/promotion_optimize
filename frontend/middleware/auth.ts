@@ -3,7 +3,9 @@ export default defineNuxtRouteMiddleware((to) => {
   
   // Check if user is authenticated
   if (!authStore.isAuthenticated) {
-    return navigateTo('/login')
+    // Redirect admin routes to admin login, others to main login
+    const loginPath = to.path.startsWith('/admin') ? '/admin/login' : '/login'
+    return navigateTo(loginPath)
   }
 
   // Check if user can access the route

@@ -92,7 +92,7 @@
 import {
   Odometer,
   Share,
-  Server,
+  Monitor,
   Document,
   Setting,
   User,
@@ -102,7 +102,6 @@ import {
   Files,
   Management,
   UserFilled,
-  Monitor,
   Promotion,
   Trophy,
   ChatRound,
@@ -193,7 +192,7 @@ const menuItems = computed((): MenuItem[] => {
     {
       title: '伺服器管理',
       path: '/server',
-      icon: 'Server',
+      icon: 'Monitor',
       roles: ['超管', '管理員', '服主'],
       children: [
         {
@@ -253,7 +252,7 @@ const menuItems = computed((): MenuItem[] => {
         {
           title: '伺服器審核',
           path: '/reviewer/servers',
-          icon: 'Server',
+          icon: 'Monitor',
           roles: ['超管', '管理員'],
           badge: getServerReviewCount()
         }

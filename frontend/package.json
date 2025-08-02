@@ -10,17 +10,23 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "nuxt": "^3.12.0",
-    "vue": "^3.4.0",
-    "vue-router": "^4.4.0"
-  },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@element-plus/nuxt": "^1.0.9",
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/nuxt": "^10.11.0",
+    "chart.js": "^4.4.1",
     "element-plus": "^2.7.6",
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@types/qrcode": "^1.5.5",
+    "nuxt": "^3.18.0",
+    "typescript": "^5.4.0",
+    "vue": "^3.4.0",
+    "vue-router": "^4.4.0",
+    "vue-tsc": "^2.0.0"
   }
 }

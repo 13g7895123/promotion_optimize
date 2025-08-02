@@ -5,6 +5,8 @@ namespace App\Controllers\API;
 use App\Controllers\BaseController;
 use App\Models\ServerModel;
 use App\Models\UserModel;
+use App\Libraries\FileUploadService;
+use App\Libraries\DatabaseTestService;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\API\ResponseTrait;
 
@@ -14,11 +16,15 @@ class ServerController extends BaseController
 
     private ServerModel $serverModel;
     private UserModel $userModel;
+    private FileUploadService $fileUploadService;
+    private DatabaseTestService $databaseTestService;
 
     public function __construct()
     {
         $this->serverModel = new ServerModel();
         $this->userModel = new UserModel();
+        $this->fileUploadService = new FileUploadService();
+        $this->databaseTestService = new DatabaseTestService();
     }
 
     /**
@@ -486,19 +492,34 @@ class ServerController extends BaseController
                 return $this->failForbidden('Access denied');
             }
 
-            // This would test the database connection using provided settings
-            // For now, just return success
+            $rules = [
+                'hostname' => 'required|max_length[255]',
+                'database' => 'required|max_length[100]',
+                'username' => 'permit_empty|max_length[100]',
+                'password' => 'permit_empty|max_length[100]',
+                'DBDriver' => 'required|in_list[MySQLi,Postgre,SQLite3]',
+                'port' => 'permit_empty|integer|greater_than[0]|less_than[65536]',
+                'charset' => 'permit_empty|max_length[50]',
+                'DBPrefix' => 'permit_empty|max_length[20]',
+            ];
+
+            if (!$this->validateData($this->request->getJSON(true), $rules)) {
+                return $this->failValidationErrors($this->validator->getErrors());
+            }
+
+            $connectionSettings = $this->request->getJSON(true);
+            
+            // Test database connection
+            $testResult = $this->databaseTestService->testConnection($connectionSettings);
+            
+            if (!$testResult['success']) {
+                return $this->fail($testResult['error'], 400);
+            }
+
             $response = [
                 'status' => 'success',
                 'message' => 'Database connection test successful',
-                'data' => [
-                    'connection_status' => 'success',
-                    'response_time' => 45, // milliseconds
-                    'database_info' => [
-                        'version' => '8.0.28',
-                        'charset' => 'utf8mb4',
-                    ],
-                ],
+                'data' => $testResult,
             ];
 
             return $this->respond($response);
@@ -506,6 +527,321 @@ class ServerController extends BaseController
         } catch (\Exception $e) {
             log_message('error', 'Database connection test error: ' . $e->getMessage());
             return $this->fail('Database connection test failed', 500);
+        }
+    }
+
+    /**
+     * Upload server logo
+     */
+    public function uploadLogo(int $id): ResponseInterface
+    {
+        try {
+            $server = $this->serverModel->find($id);
+            if (!$server) {
+                return $this->failNotFound('Server not found');
+            }
+
+            // Check if user can manage this server
+            $userPayload = $this->request->userPayload;
+            if (!$this->serverModel->canUserManage($id, $userPayload['user_id'])) {
+                return $this->failForbidden('Access denied');
+            }
+
+            $file = $this->request->getFile('logo');
+            if (!$file || !$file->isValid()) {
+                return $this->fail('No valid file uploaded', 400);
+            }
+
+            // Upload logo
+            $result = $this->fileUploadService->uploadServerImage($file, $id, 'logo');
+            
+            if (!$result['success']) {
+                return $this->fail($result['error'], 400);
+            }
+
+            // Update server logo in database
+            $this->serverModel->update($id, ['logo_image' => $result['file_path']]);
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Logo uploaded successfully',
+                'data' => $result,
+            ];
+
+            return $this->respond($response);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Logo upload error: ' . $e->getMessage());
+            return $this->fail('Failed to upload logo', 500);
+        }
+    }
+
+    /**
+     * Upload server background image
+     */
+    public function uploadBackground(int $id): ResponseInterface
+    {
+        try {
+            $server = $this->serverModel->find($id);
+            if (!$server) {
+                return $this->failNotFound('Server not found');
+            }
+
+            // Check if user can manage this server
+            $userPayload = $this->request->userPayload;
+            if (!$this->serverModel->canUserManage($id, $userPayload['user_id'])) {
+                return $this->failForbidden('Access denied');
+            }
+
+            $file = $this->request->getFile('background');
+            if (!$file || !$file->isValid()) {
+                return $this->fail('No valid file uploaded', 400);
+            }
+
+            // Upload background
+            $result = $this->fileUploadService->uploadServerImage($file, $id, 'background');
+            
+            if (!$result['success']) {
+                return $this->fail($result['error'], 400);
+            }
+
+            // Update server background in database
+            $this->serverModel->update($id, ['background_image' => $result['file_path']]);
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Background uploaded successfully',
+                'data' => $result,
+            ];
+
+            return $this->respond($response);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Background upload error: ' . $e->getMessage());
+            return $this->fail('Failed to upload background', 500);
+        }
+    }
+
+    /**
+     * Upload server banner images
+     */
+    public function uploadBanners(int $id): ResponseInterface
+    {
+        try {
+            $server = $this->serverModel->find($id);
+            if (!$server) {
+                return $this->failNotFound('Server not found');
+            }
+
+            // Check if user can manage this server
+            $userPayload = $this->request->userPayload;
+            if (!$this->serverModel->canUserManage($id, $userPayload['user_id'])) {
+                return $this->failForbidden('Access denied');
+            }
+
+            $files = $this->request->getFiles();
+            if (empty($files['banners'])) {
+                return $this->fail('No banner files uploaded', 400);
+            }
+
+            // Upload banners
+            $result = $this->fileUploadService->uploadBannerImages($files['banners'], $id);
+            
+            if (!$result['success']) {
+                return $this->fail('Failed to upload banners: ' . implode(', ', $result['errors']), 400);
+            }
+
+            // Update server banners in database
+            $bannerPaths = array_column($result['results'], 'file_path');
+            $existingBanners = json_decode($server['banner_images'] ?? '[]', true);
+            $updatedBanners = array_merge($existingBanners, $bannerPaths);
+            
+            $this->serverModel->update($id, ['banner_images' => json_encode($updatedBanners)]);
+
+            $response = [
+                'status' => 'success',
+                'message' => "Successfully uploaded {$result['uploaded_count']} banner(s)",
+                'data' => $result,
+            ];
+
+            return $this->respond($response);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Banner upload error: ' . $e->getMessage());
+            return $this->fail('Failed to upload banners', 500);
+        }
+    }
+
+    /**
+     * Delete server image
+     */
+    public function deleteImage(int $id): ResponseInterface
+    {
+        try {
+            $server = $this->serverModel->find($id);
+            if (!$server) {
+                return $this->failNotFound('Server not found');
+            }
+
+            // Check if user can manage this server
+            $userPayload = $this->request->userPayload;
+            if (!$this->serverModel->canUserManage($id, $userPayload['user_id'])) {
+                return $this->failForbidden('Access denied');
+            }
+
+            $data = $this->request->getJSON(true);
+            $imageType = $data['image_type'] ?? '';
+            $fileName = $data['file_name'] ?? '';
+
+            if (!in_array($imageType, ['logo', 'background', 'banner'])) {
+                return $this->fail('Invalid image type', 400);
+            }
+
+            // Delete file
+            if ($imageType === 'banner') {
+                // Remove from banner list
+                $banners = json_decode($server['banner_images'] ?? '[]', true);
+                $banners = array_filter($banners, function($banner) use ($fileName) {
+                    return $banner !== $fileName;
+                });
+                
+                $this->serverModel->update($id, ['banner_images' => json_encode(array_values($banners))]);
+            } else {
+                // Clear logo or background
+                $field = $imageType === 'logo' ? 'logo_image' : 'background_image';
+                $this->serverModel->update($id, [$field => null]);
+            }
+
+            // Delete physical files
+            $this->fileUploadService->deleteServerFiles($id, $imageType);
+
+            $response = [
+                'status' => 'success',
+                'message' => ucfirst($imageType) . ' deleted successfully',
+            ];
+
+            return $this->respond($response);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Image deletion error: ' . $e->getMessage());
+            return $this->fail('Failed to delete image', 500);
+        }
+    }
+
+    /**
+     * Test reward table mapping
+     */
+    public function testRewardMapping(int $id): ResponseInterface
+    {
+        try {
+            $server = $this->serverModel->find($id);
+            if (!$server) {
+                return $this->failNotFound('Server not found');
+            }
+
+            // Check if user can manage this server
+            $userPayload = $this->request->userPayload;
+            if (!$this->serverModel->canUserManage($id, $userPayload['user_id'])) {
+                return $this->failForbidden('Access denied');
+            }
+
+            $rules = [
+                'database_config' => 'required',
+                'table_mapping' => 'required',
+            ];
+
+            if (!$this->validateData($this->request->getJSON(true), $rules)) {
+                return $this->failValidationErrors($this->validator->getErrors());
+            }
+
+            $data = $this->request->getJSON(true);
+            
+            // Test table mapping
+            $result = $this->databaseTestService->testRewardTableMapping(
+                $data['database_config'],
+                $data['table_mapping']
+            );
+
+            if (!$result['success']) {
+                return $this->fail($result['error'], 400);
+            }
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Reward table mapping test completed',
+                'data' => $result,
+            ];
+
+            return $this->respond($response);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Reward mapping test error: ' . $e->getMessage());
+            return $this->fail('Failed to test reward mapping', 500);
+        }
+    }
+
+    /**
+     * Get server files information
+     */
+    public function getFiles(int $id): ResponseInterface
+    {
+        try {
+            $server = $this->serverModel->find($id);
+            if (!$server) {
+                return $this->failNotFound('Server not found');
+            }
+
+            // Check if user can manage this server
+            $userPayload = $this->request->userPayload;
+            if (!$this->serverModel->canUserManage($id, $userPayload['user_id'])) {
+                return $this->failForbidden('Access denied');
+            }
+
+            $files = [];
+
+            // Get logo info
+            if ($server['logo_image']) {
+                $logoInfo = $this->fileUploadService->getFileInfo($server['logo_image']);
+                if ($logoInfo) {
+                    $files['logo'] = $logoInfo;
+                }
+            }
+
+            // Get background info
+            if ($server['background_image']) {
+                $backgroundInfo = $this->fileUploadService->getFileInfo($server['background_image']);
+                if ($backgroundInfo) {
+                    $files['background'] = $backgroundInfo;
+                }
+            }
+
+            // Get banner info
+            if ($server['banner_images']) {
+                $banners = json_decode($server['banner_images'], true);
+                $files['banners'] = [];
+                
+                foreach ($banners as $banner) {
+                    $bannerInfo = $this->fileUploadService->getFileInfo($banner);
+                    if ($bannerInfo) {
+                        $files['banners'][] = $bannerInfo;
+                    }
+                }
+            }
+
+            $response = [
+                'status' => 'success',
+                'message' => 'Server files retrieved successfully',
+                'data' => [
+                    'server_id' => $id,
+                    'files' => $files,
+                ],
+            ];
+
+            return $this->respond($response);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Get files error: ' . $e->getMessage());
+            return $this->fail('Failed to retrieve files', 500);
         }
     }
 }

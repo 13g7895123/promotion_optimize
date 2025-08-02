@@ -170,7 +170,7 @@
 <script setup lang="ts">
 import {
   UserFilled,
-  Server,
+  Monitor,
   Document,
   DataAnalysis,
   TrendCharts,
@@ -200,7 +200,7 @@ const overviewCards = ref([
     title: '活躍伺服器',
     value: '156',
     trend: -2.3,
-    icon: 'Server',
+    icon: 'Monitor',
     type: 'success'
   },
   {
@@ -252,7 +252,7 @@ const pendingItems = ref([
     title: '伺服器註冊申請',
     description: 'DragonCraft 伺服器申請註冊',
     type: 'server',
-    icon: 'Server',
+    icon: 'Monitor',
     created_at: new Date(Date.now() - 2 * 60 * 60 * 1000)
   },
   {
@@ -294,7 +294,7 @@ const quickActions = ref([
     name: 'server-management',
     title: '伺服器管理',
     description: '審核和管理伺服器',
-    icon: 'Server',
+    icon: 'Monitor',
     color: 'success'
   },
   {

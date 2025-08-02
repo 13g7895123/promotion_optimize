@@ -10,9 +10,9 @@ class Database extends Config
 
     public array $default = [
         'DSN'          => '',
-        'hostname'     => 'localhost',
+        'hostname'     => 'mysql',
         'username'     => 'promotion_user',
-        'password'     => 'promotion_pass',
+        'password'     => 'promotion_password',
         'database'     => 'promotion_platform',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
@@ -71,7 +71,7 @@ class Database extends Config
         if (ENVIRONMENT === 'development') {
             $this->default['hostname'] = env('DB_HOST', 'localhost');
             $this->default['username'] = env('DB_USER', 'promotion_user');
-            $this->default['password'] = env('DB_PASS', 'promotion_pass');
+            $this->default['password'] = env('DB_PASSWORD', 'promotion_password');
             $this->default['database'] = env('DB_NAME', 'promotion_platform');
             $this->default['port']     = env('DB_PORT', 3306);
         }

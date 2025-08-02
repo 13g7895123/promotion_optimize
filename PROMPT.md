@@ -16,4 +16,22 @@
     - 每完成一個phase執行更新TODO.md的項目狀態，並且執行add commit push
     - 每次執行前先確認TODO.md該項目的狀態，未執行的才執行
     - 執行phase1~phase2的開發，並且後端使用backend-architecture-reviewer agent，前端使用ux-design-reviewer agent與frontend-ui-specialist agent進行前端設計與開發
-5. 請幫我修正網站伺服器改用nginx
+5. 完成以下事項
+    - 請幫我修正網站伺服器改用nginx
+    - 請安裝PHP intl擴展，並確保環境可以正常運行
+    - 幫我更新TODO.md，讓我知道專案當前的進度
+6. 完成以下事項
+    - 前端開發是否都還沒完成
+    - 以及Sprint 3的前後端是否還沒完成，幫我確認一下
+    - 並且前端開發的部分先由ux-design-reviewer agent進行設計
+    - 後由frontend-ui-specialist agent進行開發
+    - 後端則由backend-architecture-reviewer agent執行
+7. 幫我確認一下部屬的狀況，我需要與product-requirements-manager agent討論與確認當前的狀況，我用docker啟動專案是有問題的
+8. 現在可以啟動了，但我沒有看到前端有對應的PORT，NGINX的PORT打上去也是顯示503
+9. 我需要與product-requirements-manager agent討論一下，我希望網頁前台，給玩家推廣的首頁可以像這個網頁一樣"https://cs.pcgame.tw/identify/tdb"，一進去有個特效，然後用網址區分伺服器，並且輸入帳號即可進入推廣的階段，幫我依據這個需求進行調整，另外後台的設計部分，我想與frontend-ui-specialist agent討論一下，希望可以用admin_template這個專案的樣式當參考，最後，路由的部分幫我分開，/admin為管理介面的，根目錄惟一般玩家使用的
+10. 為甚麼跑一跑他會erro，"The requested module 'http://localhost:9117/_nuxt/node_modules/.cache/vite/client/deps/@element-plus_icons-vue.js?v=85ad53bf' doesn't provide an export named: 'Server'"，另外，前台為獨立頁面，不要出現後台的東西
+11. 請移除default layout的東西，這樣server頁面會吃到他
+12. 幫我完成以下項目
+    - 輸入遊戲帳號的輸入框，文字與底色相同，請幫我調整
+    - 點下開始推廣後，應該要直接到連結或是圖片推廣的地方才對，前台是沒有登入功能的，幫我依這個規則修正所有相關文件與功能
+13. 幫我調整一下登入頁面，好醜，而且你沒有提供帳號密碼讓我登入

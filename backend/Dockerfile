@@ -7,10 +7,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libicu-dev \
     zip \
     unzip \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql mysqli mbstring exif pcntl bcmath gd zip intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -22,7 +24,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --ignore-platform-req=ext-intl --no-dev --optimize-autoloader --no-interaction
 
 # Create required directories and set permissions
 RUN mkdir -p storage/logs storage/cache storage/session storage/uploads \

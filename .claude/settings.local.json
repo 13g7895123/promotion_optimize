@@ -8,7 +8,24 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(npx:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(git push:*)",
+      "Bash(php spark:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(composer install:*)",
+      "Bash(php:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(npm install)",
+      "Bash(docker-compose build:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker rm:*)",
+      "Bash(true)",
+      "Bash(curl:*)",
+      "WebFetch(domain:cs.pcgame.tw)",
+      "Bash(mv:*)",
+      "Bash(rmdir:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

@@ -42,7 +42,7 @@
             >
               <div class="server-avatar">
                 <img v-if="server.logo" :src="server.logo" :alt="server.name" />
-                <el-icon v-else size="24"><Server /></el-icon>
+                <el-icon v-else size="24"><Monitor /></el-icon>
               </div>
               <div class="server-info">
                 <div class="server-name">{{ server.name }}</div>
@@ -74,7 +74,7 @@
             </div>
             
             <div v-if="myServers.length === 0" class="no-servers">
-              <el-icon size="48"><Server /></el-icon>
+              <el-icon size="48"><Monitor /></el-icon>
               <p>還沒有註冊任何伺服器</p>
               <el-button type="primary" @click="addNewServer">
                 註冊第一個伺服器
@@ -168,7 +168,7 @@
 
 <script setup lang="ts">
 import {
-  Server,
+  Monitor,
   Share,
   TrophyBase,
   Plus,
@@ -187,7 +187,7 @@ const serverStats = ref([
   {
     title: '活躍伺服器',
     value: '3',
-    icon: 'Server',
+    icon: 'Monitor',
     type: 'primary'
   },
   {
