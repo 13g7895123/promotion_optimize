@@ -1,0 +1,437 @@
+/* 伺服器頁面共用樣式 */
+
+/* 霓虹文字效果 */
+.neon-text {
+  color: #00d4ff;
+  text-shadow: 
+    0 0 5px #00d4ff,
+    0 0 10px #00d4ff,
+    0 0 15px #00d4ff,
+    0 0 20px #00d4ff;
+  animation: neon-flicker 2s infinite alternate;
+}
+
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 
+      0 0 5px #00d4ff,
+      0 0 10px #00d4ff,
+      0 0 15px #00d4ff,
+      0 0 20px #00d4ff;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+/* 伺服器狀態徽章 */
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.status-online {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-offline {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* 玻璃態容器 */
+.glass-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.glass-container:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 212, 255, 0.2);
+}
+
+/* 輸入框樣式 */
+.server-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #000000;
+  font-size: 1.1rem;
+  padding: 0 15px 0 45px;
+  height: 50px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.server-input:focus {
+  outline: none;
+  border-color: #00d4ff;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.server-input::placeholder {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.server-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 輸入框包裝器 */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  font-size: 1.2rem;
+  z-index: 2;
+  color: rgba(0, 212, 255, 0.8);
+}
+
+/* 動作卡片 */
+.action-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-card:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
+}
+
+.action-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.action-text {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* 統一按鈕樣式 */
+.server-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  text-transform: none;
+}
+
+/* 主要按鈕 */
+.server-btn-primary {
+  background: linear-gradient(135deg, #00d4ff 0%, #0080ff 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.server-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+  background: linear-gradient(135deg, #00e6ff 0%, #0099ff 100%);
+}
+
+/* 次要按鈕 */
+.server-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.server-btn-secondary:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 危險按鈕 */
+.server-btn-danger {
+  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+}
+
+.server-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
+  background: linear-gradient(135deg, #ff5555 0%, #dd0000 100%);
+}
+
+/* 成功按鈕 */
+.server-btn-success {
+  background: linear-gradient(135deg, #00ff80 0%, #00cc66 100%);
+  color: #000000;
+  box-shadow: 0 4px 15px rgba(0, 255, 128, 0.3);
+}
+
+.server-btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 255, 128, 0.4);
+  background: linear-gradient(135deg, #00ff99 0%, #00dd77 100%);
+}
+
+/* 載入狀態 */
+.server-btn-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.server-btn-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 按鈕發光效果 */
+.server-btn-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.server-btn-glow:hover::before {
+  left: 100%;
+}
+
+/* 頁面標題樣式 */
+.page-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.page-subtitle {
+  font-size: 1.3rem;
+  color: #ffffff;
+  opacity: 0.9;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* 統計數字動畫 */
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 進度環 */
+.progress-ring {
+  transition: stroke-dashoffset 0.5s ease-in-out;
+  transform-origin: 50% 50%;
+  transform: rotate(-90deg);
+}
+
+/* 六邊形裝飾 */
+.cyber-hexagon {
+  position: relative;
+  width: 60px;
+  height: 34.64px;
+  background: var(--cyber-primary);
+  margin: 17.32px 0;
+  animation: hexagon-pulse 3s ease-in-out infinite;
+}
+
+.cyber-hexagon:before,
+.cyber-hexagon:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+}
+
+.cyber-hexagon:before {
+  bottom: 100%;
+  border-bottom: 17.32px solid var(--cyber-primary);
+}
+
+.cyber-hexagon:after {
+  top: 100%;
+  border-top: 17.32px solid var(--cyber-primary);
+}
+
+@keyframes hexagon-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .glass-container {
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+  
+  .action-card {
+    padding: 1rem;
+  }
+  
+  .server-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .glass-container {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .server-input {
+    font-size: 1rem;
+    height: 45px;
+  }
+  
+  .action-card {
+    padding: 0.8rem;
+  }
+  
+  .action-icon {
+    font-size: 1.5rem;
+  }
+  
+  .action-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* 性能優化 */
+@media (prefers-reduced-motion: reduce) {
+  .neon-text,
+  .cyber-hexagon,
+  .server-btn-glow::before {
+    animation: none !important;
+  }
+  
+  .progress-ring {
+    transition: none !important;
+  }
+}
+
+/* 載入動畫關鍵幀 */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 錯誤狀態樣式 */
+.error-state {
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* 成功狀態樣式 */
+.success-state {
+  color: #00ff80;
+  background: rgba(0, 255, 128, 0.1);
+  border: 1px solid rgba(0, 255, 128, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* 警告狀態樣式 */
+.warning-state {
+  color: #ff8000;
+  background: rgba(255, 128, 0, 0.1);
+  border: 1px solid rgba(255, 128, 0, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}

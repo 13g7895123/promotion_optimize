@@ -1,10 +1,5 @@
 <template>
-  <div class="server-home">
-    <!-- 粒子背景效果 -->
-    <div class="particle-background">
-      <canvas ref="particleCanvas" class="particle-canvas"></canvas>
-    </div>
-
+  <div class="server-home-container">
     <!-- 主要內容 -->
     <div class="hero-section">
       <div class="hero-container">
@@ -33,7 +28,7 @@
 
         <!-- 帳號輸入區域 -->
         <div class="account-input-section">
-          <div class="input-container">
+          <div class="input-container glass-container">
             <h3 class="input-title">請輸入您的遊戲帳號</h3>
             <form @submit.prevent="handleAccountSubmit" class="account-form">
               <div class="form-item">
@@ -42,21 +37,21 @@
                   <input
                     v-model="gameAccount"
                     placeholder="請輸入遊戲帳號"
-                    class="account-input"
+                    class="account-input server-input"
                     :disabled="isValidating"
                     @keyup.enter="handleAccountSubmit"
                   />
                 </div>
               </div>
               <div class="form-item">
-                <GlowButton 
+                <button 
                   @click="handleAccountSubmit"
-                  :loading="isValidating"
-                  class="submit-btn"
+                  :disabled="isValidating"
+                  class="submit-btn server-btn server-btn-primary server-btn-glow"
                 >
-                  <span class="btn-icon">🚀</span>
-                  開始推廣
-                </GlowButton>
+                  <span class="btn-icon">{{ isValidating ? '⏳' : '🚀' }}</span>
+                  {{ isValidating ? '驗證中...' : '開始推廣' }}
+                </button>
               </div>
             </form>
           </div>
@@ -83,12 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // 組件導入
 const TypewriterText = defineAsyncComponent(() => import('~/components/effects/TypewriterText.vue'))
-const GlowButton = defineAsyncComponent(() => import('~/components/common/GlowButton.vue'))
 
 // 路由和狀態
 const route = useRoute()
@@ -99,7 +93,6 @@ const serverCode = route.params.server as string
 const gameAccount = ref('')
 const isValidating = ref(false)
 const serverInfo = ref<any>(null)
-const particleCanvas = ref<HTMLCanvasElement>()
 
 // 歡迎文字
 const welcomeTexts = [
@@ -110,7 +103,7 @@ const welcomeTexts = [
 
 // 頁面元數據
 definePageMeta({
-  layout: 'default'
+  layout: 'server'
 })
 
 // 載入伺服器信息
@@ -185,123 +178,27 @@ const goToProfile = () => {
   router.push(`/${serverCode}/profile?account=${encodeURIComponent(gameAccount.value)}`)
 }
 
-// 粒子動畫
-const initParticleEffect = () => {
-  if (!particleCanvas.value) return
-
-  const canvas = particleCanvas.value
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  // 設置 canvas 尺寸
-  const resizeCanvas = () => {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-  }
-  
-  resizeCanvas()
-  window.addEventListener('resize', resizeCanvas)
-
-  // 粒子類
-  class Particle {
-    x: number
-    y: number
-    size: number
-    speedX: number
-    speedY: number
-    opacity: number
-
-    constructor() {
-      this.x = Math.random() * canvas.width
-      this.y = Math.random() * canvas.height
-      this.size = Math.random() * 2 + 0.5
-      this.speedX = Math.random() * 0.5 - 0.25
-      this.speedY = Math.random() * 0.5 - 0.25
-      this.opacity = Math.random() * 0.5 + 0.2
-    }
-
-    update() {
-      this.x += this.speedX
-      this.y += this.speedY
-
-      if (this.x > canvas.width) this.x = 0
-      if (this.x < 0) this.x = canvas.width
-      if (this.y > canvas.height) this.y = 0
-      if (this.y < 0) this.y = canvas.height
-    }
-
-    draw() {
-      ctx!.save()
-      ctx!.globalAlpha = this.opacity
-      ctx!.fillStyle = '#00d4ff'
-      ctx!.shadowBlur = 10
-      ctx!.shadowColor = '#00d4ff'
-      ctx!.beginPath()
-      ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-      ctx!.fill()
-      ctx!.restore()
-    }
-  }
-
-  // 創建粒子
-  const particles: Particle[] = []
-  for (let i = 0; i < 50; i++) {
-    particles.push(new Particle())
-  }
-
-  // 動畫循環
-  const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    
-    particles.forEach(particle => {
-      particle.update()
-      particle.draw()
-    })
-
-    requestAnimationFrame(animate)
-  }
-
-  animate()
-}
 
 // 生命週期
 onMounted(() => {
   loadServerInfo()
-  nextTick(() => {
-    initParticleEffect()
-  })
 })
 
-onUnmounted(() => {
-  window.removeEventListener('resize', () => {})
-})
 </script>
 
 <style scoped>
-.server-home {
+/* 導入共用伺服器頁面樣式 */
+@import '@/assets/css/server-pages.css';
+
+.server-home-container {
   min-height: 100vh;
   position: relative;
-  background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 50%, #2d1b69 100%);
-  overflow: hidden;
-}
-
-.particle-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.particle-canvas {
-  width: 100%;
-  height: 100%;
+  z-index: 3;
 }
 
 .hero-section {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -395,14 +292,7 @@ onUnmounted(() => {
   margin-bottom: 3rem;
 }
 
-.input-container {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
+/* input-container styles are now inherited from glass-container */
 
 .input-title {
   color: #ffffff;
@@ -429,38 +319,13 @@ onUnmounted(() => {
   color: rgba(0, 212, 255, 0.8);
 }
 
-.account-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(0, 212, 255, 0.3);
-  color: #000000;
-  font-size: 1.1rem;
-  padding: 0 15px 0 45px;
-  height: 50px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
+/* account-input styles are now inherited from server-input */
 
-.account-input:focus {
-  outline: none;
-  border-color: #00d4ff;
-  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-}
-
-.account-input::placeholder {
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.account-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
+/* submit-btn styles are now inherited from server-btn classes */
 .submit-btn {
   width: 100%;
   height: 50px;
   font-size: 1.1rem;
-  font-weight: 600;
 }
 
 .btn-icon {
@@ -474,36 +339,9 @@ onUnmounted(() => {
   margin-top: 2rem;
 }
 
-.action-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #ffffff;
-}
+/* action-card styles are now inherited from shared CSS */
 
-.action-card:hover {
-  background: rgba(0, 212, 255, 0.1);
-  border-color: rgba(0, 212, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.2);
-}
-
-.action-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.action-text {
-  display: block;
-  font-size: 1rem;
-  font-weight: 500;
-}
+/* action-icon and action-text styles are now inherited from shared CSS */
 
 /* 響應式設計 */
 @media (max-width: 768px) {
