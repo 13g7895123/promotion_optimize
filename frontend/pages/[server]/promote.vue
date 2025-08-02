@@ -186,12 +186,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import QRCode from 'qrcode'
-import { 
-  Promotion, Link, Star, CopyDocument, Qrcode, Share, 
-  Picture, Camera, Download 
-} from '@element-plus/icons-vue'
 
 // 組件導入
 const GlowButton = defineAsyncComponent(() => import('~/components/common/GlowButton.vue'))
@@ -295,10 +290,10 @@ const generatePromotionLink = async () => {
     const linkId = Math.random().toString(36).substr(2, 9)
     promotionLink.value = `${baseUrl}/${serverCode}?ref=${gameAccount}&type=${linkType.value}&id=${linkId}`
     
-    ElMessage.success('推廣連結生成成功！')
+    alert('推廣連結生成成功！')
   } catch (error) {
     console.error('生成連結失敗:', error)
-    ElMessage.error('生成連結失敗')
+    alert('生成連結失敗')
   } finally {
     isGenerating.value = false
   }
@@ -308,17 +303,17 @@ const generatePromotionLink = async () => {
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
-    ElMessage.success('已複製到剪貼板！')
+    alert('已複製到剪貼板！')
   } catch (error) {
     console.error('複製失敗:', error)
-    ElMessage.error('複製失敗')
+    alert('複製失敗')
   }
 }
 
 // 生成 QR Code
 const generateQRCode = async () => {
   if (!promotionLink.value) {
-    ElMessage.warning('請先生成推廣連結')
+    alert('請先生成推廣連結')
     return
   }
 
@@ -337,7 +332,7 @@ const generateQRCode = async () => {
         })
       } catch (error) {
         console.error('生成 QR Code 失敗:', error)
-        ElMessage.error('生成 QR Code 失敗')
+        alert('生成 QR Code 失敗')
       }
     }
   })
@@ -354,11 +349,11 @@ const downloadQRCode = async () => {
       link.download = `promotion-qrcode-${gameAccount}.png`
       link.href = canvas.toDataURL()
       link.click()
-      ElMessage.success('QR Code 下載成功！')
+      alert('QR Code 下載成功！')
     }
   } catch (error) {
     console.error('下載失敗:', error)
-    ElMessage.error('下載失敗')
+    alert('下載失敗')
   }
 }
 
@@ -374,7 +369,7 @@ const shareToSocial = () => {
     })
   } else {
     copyToClipboard(shareText)
-    ElMessage.info('分享內容已複製到剪貼板')
+    alert('分享內容已複製到剪貼板')
   }
 }
 
@@ -385,10 +380,10 @@ const generatePromotionImage = async () => {
   try {
     // 模擬圖片生成
     await new Promise(resolve => setTimeout(resolve, 2000))
-    ElMessage.success('推廣圖片生成成功！')
+    alert('推廣圖片生成成功！')
   } catch (error) {
     console.error('生成圖片失敗:', error)
-    ElMessage.error('生成圖片失敗')
+    alert('生成圖片失敗')
   } finally {
     isGeneratingImage.value = false
   }
@@ -400,13 +395,13 @@ const downloadMaterial = (material: any) => {
   link.href = material.downloadUrl
   link.download = material.name
   link.click()
-  ElMessage.success(`${material.name} 下載成功！`)
+  alert(`${material.name} 下載成功！`)
 }
 
 // 生命週期
 onMounted(() => {
   if (!gameAccount) {
-    ElMessage.warning('請先輸入遊戲帳號')
+    alert('請先輸入遊戲帳號')
     // 跳轉回伺服器首頁
     router.push(`/${serverCode}`)
     return

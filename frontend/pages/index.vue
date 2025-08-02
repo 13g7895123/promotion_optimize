@@ -31,14 +31,14 @@
 
         <!-- 導航按鈕 -->
         <div class="error-actions">
-          <el-button type="primary" size="large" @click="goToServerSelect" class="action-btn">
-            <el-icon><House /></el-icon>
+          <button @click="goToServerSelect" class="action-btn primary">
+            <span class="btn-icon">🏠</span>
             選擇伺服器
-          </el-button>
-          <el-button type="default" size="large" @click="goToAdmin" class="action-btn">
-            <el-icon><Setting /></el-icon>
+          </button>
+          <button @click="goToAdmin" class="action-btn secondary">
+            <span class="btn-icon">⚙️</span>
             管理後台
-          </el-button>
+          </button>
         </div>
 
         <!-- 建議區域 -->
@@ -46,15 +46,15 @@
           <h3 class="suggestions-title">您可以嘗試：</h3>
           <ul class="suggestions-list">
             <li @click="goToServerExample('sv001')">
-              <el-icon><Right /></el-icon>
+              <span class="list-icon">➤</span>
               前往 龍之谷伺服器
             </li>
             <li @click="goToServerExample('sv002')">
-              <el-icon><Right /></el-icon>
+              <span class="list-icon">➤</span>
               前往 新楓之谷伺服器
             </li>
             <li @click="goToServerExample('sv003')">
-              <el-icon><Right /></el-icon>
+              <span class="list-icon">➤</span>
               前往 天堂伺服器
             </li>
           </ul>
@@ -66,7 +66,6 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { House, Setting, Right } from '@element-plus/icons-vue'
 
 // 路由
 const router = useRouter()
@@ -283,11 +282,33 @@ const goToServerExample = (serverCode: string) => {
   font-weight: 600;
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.action-btn.primary {
+  background: #409eff;
+  color: white;
+  border-color: #409eff;
+}
+
+.action-btn.secondary {
+  background: #909399;
+  color: white;
+  border-color: #909399;
 }
 
 .action-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
+}
+
+.btn-icon {
+  font-size: 1.1rem;
 }
 
 /* 建議區域 */
@@ -325,6 +346,11 @@ const goToServerExample = (serverCode: string) => {
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.list-icon {
+  color: #00d4ff;
+  font-weight: bold;
 }
 
 .suggestions-list li:hover {

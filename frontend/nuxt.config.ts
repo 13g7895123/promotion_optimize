@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
-    '@element-plus/nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt'
   ],
@@ -16,25 +15,9 @@ export default defineNuxtConfig({
       apiBase: process.env.API_BASE_URL || 'http://localhost:9017/api'
     }
   },
-  elementPlus: {
-    /** Options */
-  },
-
   // TypeScript configuration
   typescript: {
     strict: true,
     typeCheck: false
-  },
-
-  // Build optimization
-  build: {
-    transpile: ['element-plus']
-  },
-
-  // Vite configuration
-  vite: {
-    optimizeDeps: {
-      include: ['element-plus/es', '@element-plus/icons-vue']
-    }
   }
 })

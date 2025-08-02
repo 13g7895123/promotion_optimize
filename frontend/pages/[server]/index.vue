@@ -14,9 +14,9 @@
             <span class="neon-text">{{ serverInfo?.name || '伺服器' }}</span>
           </h1>
           <div class="server-status">
-            <el-tag :type="serverInfo?.status === 'online' ? 'success' : 'danger'" effect="dark">
+            <span class="status-badge" :class="serverInfo?.status === 'online' ? 'status-online' : 'status-offline'">
               {{ serverInfo?.status === 'online' ? '在線' : '離線' }}
-            </el-tag>
+            </span>
             <span class="player-count">{{ serverInfo?.online_players || 0 }} 人在線</span>
           </div>
         </div>
@@ -35,48 +35,45 @@
         <div class="account-input-section">
           <div class="input-container">
             <h3 class="input-title">請輸入您的遊戲帳號</h3>
-            <el-form @submit.prevent="handleAccountSubmit" class="account-form">
-              <el-form-item>
-                <el-input
-                  v-model="gameAccount"
-                  placeholder="請輸入遊戲帳號"
-                  size="large"
-                  class="account-input"
-                  :loading="isValidating"
-                  @keyup.enter="handleAccountSubmit"
-                >
-                  <template #prefix>
-                    <el-icon><User /></el-icon>
-                  </template>
-                </el-input>
-              </el-form-item>
-              <el-form-item>
+            <form @submit.prevent="handleAccountSubmit" class="account-form">
+              <div class="form-item">
+                <div class="input-wrapper">
+                  <span class="input-icon">👤</span>
+                  <input
+                    v-model="gameAccount"
+                    placeholder="請輸入遊戲帳號"
+                    class="account-input"
+                    :disabled="isValidating"
+                    @keyup.enter="handleAccountSubmit"
+                  />
+                </div>
+              </div>
+              <div class="form-item">
                 <GlowButton 
                   @click="handleAccountSubmit"
                   :loading="isValidating"
-                  size="large"
                   class="submit-btn"
                 >
-                  <el-icon><Promotion /></el-icon>
+                  <span class="btn-icon">🚀</span>
                   開始推廣
                 </GlowButton>
-              </el-form-item>
-            </el-form>
+              </div>
+            </form>
           </div>
         </div>
 
         <!-- 快速功能 -->
         <div class="quick-actions">
           <div class="action-card" @click="goToEvents">
-            <el-icon class="action-icon"><Calendar /></el-icon>
+            <span class="action-icon">📅</span>
             <span class="action-text">活動中心</span>
           </div>
           <div class="action-card" @click="goToRankings">
-            <el-icon class="action-icon"><Trophy /></el-icon>
+            <span class="action-icon">🏆</span>
             <span class="action-text">推廣排行</span>
           </div>
           <div class="action-card" @click="goToProfile">
-            <el-icon class="action-icon"><User /></el-icon>
+            <span class="action-icon">👤</span>
             <span class="action-text">個人記錄</span>
           </div>
         </div>
@@ -88,8 +85,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { User, Calendar, Trophy, Promotion } from '@element-plus/icons-vue'
 
 // 組件導入
 const TypewriterText = defineAsyncComponent(() => import('~/components/effects/TypewriterText.vue'))
@@ -134,7 +129,7 @@ const loadServerInfo = async () => {
     }
   } catch (error) {
     console.error('載入伺服器信息失敗:', error)
-    ElMessage.error('載入伺服器信息失敗')
+    alert('載入伺服器信息失敗')
     // 跳轉到主頁或 404 頁面
     router.push('/')
   }
@@ -143,7 +138,7 @@ const loadServerInfo = async () => {
 // 帳號驗證和提交
 const handleAccountSubmit = async () => {
   if (!gameAccount.value.trim()) {
-    ElMessage.warning('請輸入遊戲帳號')
+    alert('請輸入遊戲帳號')
     return
   }
 
@@ -167,7 +162,7 @@ const handleAccountSubmit = async () => {
     
   } catch (error) {
     console.error('帳號驗證失敗:', error)
-    ElMessage.error('帳號驗證失敗，請確認帳號是否正確')
+    alert('帳號驗證失敗，請確認帳號是否正確')
   } finally {
     isValidating.value = false
   }
@@ -184,7 +179,7 @@ const goToRankings = () => {
 
 const goToProfile = () => {
   if (!gameAccount.value) {
-    ElMessage.warning('請先輸入遊戲帳號')
+    alert('請先輸入遊戲帳號')
     return
   }
   router.push(`/${serverCode}/profile?account=${encodeURIComponent(gameAccount.value)}`)
@@ -361,6 +356,26 @@ onUnmounted(() => {
   margin-bottom: 1rem;
 }
 
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-online {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-offline {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
 .player-count {
   color: #ffffff;
   font-size: 1.1rem;
@@ -396,30 +411,49 @@ onUnmounted(() => {
   font-weight: 600;
 }
 
-.account-form .el-form-item {
+.account-form .form-item {
   margin-bottom: 1.5rem;
 }
 
-.account-input {
-  font-size: 1.1rem;
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.account-input :deep(.el-input__inner) {
+.input-icon {
+  position: absolute;
+  left: 15px;
+  font-size: 1.2rem;
+  z-index: 2;
+  color: rgba(0, 212, 255, 0.8);
+}
+
+.account-input {
+  width: 100%;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(0, 212, 255, 0.3);
   color: #000000;
   font-size: 1.1rem;
-  padding: 0 15px;
+  padding: 0 15px 0 45px;
   height: 50px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.account-input :deep(.el-input__inner):focus {
+.account-input:focus {
+  outline: none;
   border-color: #00d4ff;
   box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
 }
 
-.account-input :deep(.el-input__inner)::placeholder {
+.account-input::placeholder {
   color: rgba(0, 0, 0, 0.6);
+}
+
+.account-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .submit-btn {
@@ -427,6 +461,10 @@ onUnmounted(() => {
   height: 50px;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+.btn-icon {
+  margin-right: 0.5rem;
 }
 
 .quick-actions {
@@ -458,7 +496,7 @@ onUnmounted(() => {
 .action-icon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #00d4ff;
+  display: block;
 }
 
 .action-text {
