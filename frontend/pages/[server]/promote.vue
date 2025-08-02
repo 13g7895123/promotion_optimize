@@ -61,7 +61,7 @@
             </el-form-item>
             <el-form-item>
               <GlowButton @click="generatePromotionLink" :loading="isGenerating" style="width: 100%">
-                <el-icon><Magic /></el-icon>
+                <el-icon><Star /></el-icon>
                 生成推廣連結
               </GlowButton>
             </el-form-item>
@@ -189,7 +189,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import QRCode from 'qrcode'
 import { 
-  Promotion, Link, Magic, CopyDocument, Qrcode, Share, 
+  Promotion, Link, Star, CopyDocument, Qrcode, Share, 
   Picture, Camera, Download 
 } from '@element-plus/icons-vue'
 
