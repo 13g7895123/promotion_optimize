@@ -42,3 +42,6 @@
     - 為甚麼我點開始推廣後他沒有正常顯示應該要顯示的頁面
 16. 修復以下錯誤，"Global error handler: SyntaxError: The requested module 'http://localhost:9117/_nuxt/node_modules/.cache/vite/client/deps/@element-plus_icons-vue.js?v=02dce78e' doesn't provide an export named: 'QrCode' "
 17. element-plus噴了一堆不知名的錯誤，幫我移除該專案的element-plus
+18. 完成以下項目
+    - 請檢查專案中所有有使用到element-plus，一堆根本都還在
+    - 推廣的部分，輸入完帳號之後，幫我參考這一頁的功能"https://cs.pcgame.tw/promotion/tdb/r8q5vx5kcav87xrhrcd7"，他只有要執行紀錄，並不是要生成相關連結或是圖片，一開始就搞錯了，PM agent也太爛了吧

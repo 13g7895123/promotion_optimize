@@ -3,18 +3,19 @@
     <!-- 頁面標題 -->
     <div class="page-header">
       <h1 class="page-title">
-        <el-icon><Promotion /></el-icon>
-        推廣工具
+        <span class="title-icon">📊</span>
+        推廣記錄
       </h1>
-      <p class="page-description">生成您的專屬推廣連結和素材，邀請好友加入遊戲</p>
+      <p class="page-description">查看您的推廣活動記錄和統計數據</p>
     </div>
 
     <!-- 用戶信息 -->
-    <el-card class="user-info-card" shadow="hover">
+    <div class="user-info-card">
       <div class="user-info">
         <div class="user-details">
           <h3>推廣帳號：{{ gameAccount }}</h3>
           <p>伺服器：{{ serverInfo?.name }}</p>
+          <p class="join-date">加入時間：{{ formatDate(new Date()) }}</p>
         </div>
         <div class="user-stats">
           <div class="stat-item">
@@ -31,162 +32,109 @@
           </div>
         </div>
       </div>
-    </el-card>
+    </div>
 
-    <!-- 推廣連結生成 -->
-    <el-card class="promotion-card" shadow="hover">
-      <template #header>
-        <div class="card-header">
-          <el-icon><Link /></el-icon>
-          <span>推廣連結</span>
-        </div>
-      </template>
-      
-      <div class="promotion-link-section">
-        <div class="link-generator">
-          <el-form @submit.prevent="generatePromotionLink" class="generator-form">
-            <el-form-item label="連結類型">
-              <el-select v-model="linkType" placeholder="請選擇連結類型" style="width: 100%">
-                <el-option label="一般推廣" value="general" />
-                <el-option label="新手推廣" value="newbie" />
-                <el-option label="回歸推廣" value="return" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="有效期限">
-              <el-select v-model="expireDays" placeholder="選擇有效期" style="width: 100%">
-                <el-option label="7天" :value="7" />
-                <el-option label="30天" :value="30" />
-                <el-option label="永久" :value="0" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <GlowButton @click="generatePromotionLink" :loading="isGenerating" style="width: 100%">
-                <el-icon><Star /></el-icon>
-                生成推廣連結
-              </GlowButton>
-            </el-form-item>
-          </el-form>
-        </div>
-
-        <!-- 生成的連結 -->
-        <div v-if="promotionLink" class="generated-link">
-          <h4>您的推廣連結：</h4>
-          <div class="link-container">
-            <el-input 
-              v-model="promotionLink" 
-              readonly 
-              class="link-input"
-            >
-              <template #append>
-                <el-button @click="copyToClipboard(promotionLink)" type="primary">
-                  <el-icon><CopyDocument /></el-icon>
-                  複製
-                </el-button>
-              </template>
-            </el-input>
-          </div>
-          <div class="link-actions">
-            <el-button @click="generateQRCode" type="success">
-              <el-icon><Qrcode /></el-icon>
-              生成 QR Code
-            </el-button>
-            <el-button @click="shareToSocial" type="info">
-              <el-icon><Share /></el-icon>
-              分享到社群
-            </el-button>
-          </div>
-        </div>
+    <!-- 推廣記錄表 -->
+    <div class="promotion-records-card">
+      <div class="card-header">
+        <h2>
+          <span class="header-icon">📋</span>
+          推廣記錄
+        </h2>
+        <button @click="recordPromotion" class="record-btn" :disabled="isRecording">
+          <span class="btn-icon">➕</span>
+          {{ isRecording ? '記錄中...' : '記錄推廣' }}
+        </button>
       </div>
-    </el-card>
-
-    <!-- 推廣素材 -->
-    <el-card class="materials-card" shadow="hover">
-      <template #header>
-        <div class="card-header">
-          <el-icon><Picture /></el-icon>
-          <span>推廣素材</span>
+      
+      <div class="records-table">
+        <div class="table-header">
+          <div class="th">時間</div>
+          <div class="th">類型</div>
+          <div class="th">狀態</div>
+          <div class="th">獎勵</div>
         </div>
-      </template>
-
-      <div class="materials-section">
-        <div class="material-generator">
-          <h4>自定義推廣圖片</h4>
-          <el-form class="material-form">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-form-item label="背景模板">
-                  <el-select v-model="selectedTemplate" placeholder="選擇模板" style="width: 100%">
-                    <el-option 
-                      v-for="template in backgroundTemplates" 
-                      :key="template.id"
-                      :label="template.name" 
-                      :value="template.id" 
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="文字內容">
-                  <el-input 
-                    v-model="customText" 
-                    placeholder="輸入推廣文字"
-                    maxlength="50"
-                    show-word-limit
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-form-item>
-              <GlowButton @click="generatePromotionImage" :loading="isGeneratingImage" style="width: 100%">
-                <el-icon><Camera /></el-icon>
-                生成推廣圖片
-              </GlowButton>
-            </el-form-item>
-          </el-form>
-        </div>
-
-        <!-- 預設素材 -->
-        <div class="preset-materials">
-          <h4>預設推廣素材</h4>
-          <div class="materials-grid">
-            <div 
-              v-for="material in promotionMaterials" 
-              :key="material.id"
-              class="material-item"
-              @click="downloadMaterial(material)"
-            >
-              <img :src="material.thumbnail" :alt="material.name" class="material-preview" />
-              <div class="material-info">
-                <p class="material-name">{{ material.name }}</p>
-                <p class="material-size">{{ material.size }}</p>
-              </div>
-              <div class="material-overlay">
-                <el-icon class="download-icon"><Download /></el-icon>
-              </div>
+        
+        <div class="table-body">
+          <div 
+            v-for="record in promotionRecords" 
+            :key="record.id"
+            class="table-row"
+          >
+            <div class="td">{{ formatDateTime(record.createdAt) }}</div>
+            <div class="td">
+              <span class="record-type" :class="record.type">
+                {{ getTypeLabel(record.type) }}
+              </span>
+            </div>
+            <div class="td">
+              <span class="record-status" :class="record.status">
+                {{ getStatusLabel(record.status) }}
+              </span>
+            </div>
+            <div class="td">
+              <span class="reward-amount">{{ record.reward || 0 }}</span>
             </div>
           </div>
+          
+          <div v-if="promotionRecords.length === 0" class="empty-state">
+            <span class="empty-icon">📝</span>
+            <p>尚無推廣記錄</p>
+            <p class="empty-tip">點擊上方「記錄推廣」按鈕開始記錄您的推廣活動</p>
+          </div>
         </div>
       </div>
-    </el-card>
+    </div>
 
-    <!-- QR Code 彈窗 -->
-    <el-dialog v-model="qrCodeVisible" title="推廣 QR Code" width="400px" center>
-      <div class="qr-code-container">
-        <div ref="qrCodeRef" class="qr-code"></div>
-        <p class="qr-code-tip">掃描此 QR Code 即可直接訪問您的推廣連結</p>
-        <el-button @click="downloadQRCode" type="primary" style="width: 100%">
-          <el-icon><Download /></el-icon>
-          下載 QR Code
-        </el-button>
+    <!-- 統計圖表 -->
+    <div class="statistics-card">
+      <div class="card-header">
+        <h2>
+          <span class="header-icon">📈</span>
+          推廣統計
+        </h2>
       </div>
-    </el-dialog>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ todayStats.count }}</div>
+            <div class="stat-label">今日推廣</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ weekStats.count }}</div>
+            <div class="stat-label">本週推廣</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ totalRewards }}</div>
+            <div class="stat-label">總獎勵</div>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ successRate }}%</div>
+            <div class="stat-label">成功率</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import QRCode from 'qrcode'
 
 // 組件導入
 const GlowButton = defineAsyncComponent(() => import('~/components/common/GlowButton.vue'))
@@ -206,53 +154,23 @@ const promotionStats = ref({
   total_rewards: 0
 })
 
-// 連結生成相關
-const linkType = ref('general')
-const expireDays = ref(30)
-const promotionLink = ref('')
-const isGenerating = ref(false)
+// 推廣記錄相關
+const isRecording = ref(false)
+const promotionRecords = ref<any[]>([])
 
-// QR Code 相關
-const qrCodeVisible = ref(false)
-const qrCodeRef = ref<HTMLElement>()
+// 統計數據
+const todayStats = ref({ count: 0 })
+const weekStats = ref({ count: 0 })
 
-// 素材生成相關
-const selectedTemplate = ref('')
-const customText = ref('')
-const isGeneratingImage = ref(false)
+const totalRewards = computed(() => {
+  return promotionRecords.value.reduce((sum, record) => sum + (record.reward || 0), 0)
+})
 
-// 背景模板
-const backgroundTemplates = [
-  { id: 'template1', name: '科技風格' },
-  { id: 'template2', name: '夢幻風格' },
-  { id: 'template3', name: '簡約風格' },
-  { id: 'template4', name: '遊戲風格' }
-]
-
-// 預設推廣素材
-const promotionMaterials = [
-  {
-    id: 1,
-    name: '橫幅廣告',
-    size: '728x90',
-    thumbnail: '/images/materials/banner1.jpg',
-    downloadUrl: '/downloads/banner1.png'
-  },
-  {
-    id: 2,
-    name: '方形圖片',
-    size: '400x400',
-    thumbnail: '/images/materials/square1.jpg',
-    downloadUrl: '/downloads/square1.png'
-  },
-  {
-    id: 3,
-    name: '直式海報',
-    size: '600x800',
-    thumbnail: '/images/materials/poster1.jpg',
-    downloadUrl: '/downloads/poster1.png'
-  }
-]
+const successRate = computed(() => {
+  if (promotionRecords.value.length === 0) return 0
+  const successCount = promotionRecords.value.filter(record => record.status === 'success').length
+  return Math.round((successCount / promotionRecords.value.length) * 100)
+})
 
 // 頁面元數據
 definePageMeta({
@@ -273,129 +191,131 @@ const loadData = async () => {
       successful_invites: Math.floor(Math.random() * 50),
       total_rewards: Math.floor(Math.random() * 10000)
     }
+
+    // 載入推廣記錄
+    await loadPromotionRecords()
+    
+    // 載入統計數據
+    await loadStatistics()
   } catch (error) {
     console.error('載入數據失敗:', error)
   }
 }
 
-// 生成推廣連結
-const generatePromotionLink = async () => {
-  isGenerating.value = true
+// 載入推廣記錄
+const loadPromotionRecords = async () => {
+  try {
+    // 模擬API調用 - 實際使用時應該從後端API載入
+    const mockRecords = [
+      {
+        id: 1,
+        type: 'invitation',
+        status: 'success',
+        reward: 100,
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 2,
+        type: 'share',
+        status: 'pending',
+        reward: 0,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000)
+      },
+      {
+        id: 3,
+        type: 'referral',
+        status: 'success',
+        reward: 200,
+        createdAt: new Date(Date.now() - 60 * 60 * 1000)
+      }
+    ]
+    
+    promotionRecords.value = mockRecords
+  } catch (error) {
+    console.error('載入推廣記錄失敗:', error)
+  }
+}
+
+// 載入統計數據
+const loadStatistics = async () => {
+  try {
+    const today = new Date()
+    const todayRecords = promotionRecords.value.filter(record => {
+      const recordDate = new Date(record.createdAt)
+      return recordDate.toDateString() === today.toDateString()
+    })
+    
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    const weekRecords = promotionRecords.value.filter(record => {
+      return new Date(record.createdAt) >= oneWeekAgo
+    })
+    
+    todayStats.value = { count: todayRecords.length }
+    weekStats.value = { count: weekRecords.length }
+  } catch (error) {
+    console.error('載入統計數據失敗:', error)
+  }
+}
+
+// 記錄推廣活動
+const recordPromotion = async () => {
+  isRecording.value = true
   
   try {
     // 模擬API調用
     await new Promise(resolve => setTimeout(resolve, 1000))
     
-    const baseUrl = window.location.origin
-    const linkId = Math.random().toString(36).substr(2, 9)
-    promotionLink.value = `${baseUrl}/${serverCode}?ref=${gameAccount}&type=${linkType.value}&id=${linkId}`
+    const newRecord = {
+      id: Date.now(),
+      type: 'manual',
+      status: 'success',
+      reward: Math.floor(Math.random() * 100) + 50,
+      createdAt: new Date()
+    }
     
-    alert('推廣連結生成成功！')
+    promotionRecords.value.unshift(newRecord)
+    
+    // 更新統計
+    await loadStatistics()
+    
+    alert('推廣記錄已成功添加！')
   } catch (error) {
-    console.error('生成連結失敗:', error)
-    alert('生成連結失敗')
+    console.error('記錄推廣失敗:', error)
+    alert('記錄推廣失敗')
   } finally {
-    isGenerating.value = false
+    isRecording.value = false
   }
 }
 
-// 複製到剪貼板
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text)
-    alert('已複製到剪貼板！')
-  } catch (error) {
-    console.error('複製失敗:', error)
-    alert('複製失敗')
-  }
+// 格式化日期
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('zh-TW')
 }
 
-// 生成 QR Code
-const generateQRCode = async () => {
-  if (!promotionLink.value) {
-    alert('請先生成推廣連結')
-    return
-  }
-
-  qrCodeVisible.value = true
-  
-  nextTick(async () => {
-    if (qrCodeRef.value) {
-      try {
-        await QRCode.toCanvas(qrCodeRef.value, promotionLink.value, {
-          width: 300,
-          margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF'
-          }
-        })
-      } catch (error) {
-        console.error('生成 QR Code 失敗:', error)
-        alert('生成 QR Code 失敗')
-      }
-    }
-  })
+// 格式化日期時間
+const formatDateTime = (date: Date) => {
+  return new Date(date).toLocaleString('zh-TW')
 }
 
-// 下載 QR Code
-const downloadQRCode = async () => {
-  if (!qrCodeRef.value) return
-  
-  try {
-    const canvas = qrCodeRef.value.querySelector('canvas')
-    if (canvas) {
-      const link = document.createElement('a')
-      link.download = `promotion-qrcode-${gameAccount}.png`
-      link.href = canvas.toDataURL()
-      link.click()
-      alert('QR Code 下載成功！')
-    }
-  } catch (error) {
-    console.error('下載失敗:', error)
-    alert('下載失敗')
+// 獲取類型標籤
+const getTypeLabel = (type: string) => {
+  const typeMap: { [key: string]: string } = {
+    invitation: '邀請',
+    share: '分享',
+    referral: '推薦',
+    manual: '手動記錄'
   }
+  return typeMap[type] || type
 }
 
-// 分享到社群
-const shareToSocial = () => {
-  const shareText = `快來加入 ${serverInfo.value?.name}！使用我的推廣連結獲得額外獎勵：${promotionLink.value}`
-  
-  if (navigator.share) {
-    navigator.share({
-      title: '遊戲推廣邀請',
-      text: shareText,
-      url: promotionLink.value
-    })
-  } else {
-    copyToClipboard(shareText)
-    alert('分享內容已複製到剪貼板')
+// 獲取狀態標籤
+const getStatusLabel = (status: string) => {
+  const statusMap: { [key: string]: string } = {
+    success: '成功',
+    pending: '處理中',
+    failed: '失敗'
   }
-}
-
-// 生成推廣圖片
-const generatePromotionImage = async () => {
-  isGeneratingImage.value = true
-  
-  try {
-    // 模擬圖片生成
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    alert('推廣圖片生成成功！')
-  } catch (error) {
-    console.error('生成圖片失敗:', error)
-    alert('生成圖片失敗')
-  } finally {
-    isGeneratingImage.value = false
-  }
-}
-
-// 下載推廣素材
-const downloadMaterial = (material: any) => {
-  const link = document.createElement('a')
-  link.href = material.downloadUrl
-  link.download = material.name
-  link.click()
-  alert(`${material.name} 下載成功！`)
+  return statusMap[status] || status
 }
 
 // 生命週期
@@ -415,6 +335,8 @@ onMounted(() => {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 
 .page-header {
@@ -424,7 +346,7 @@ onMounted(() => {
 
 .page-title {
   font-size: 2.5rem;
-  color: #2c3e50;
+  color: white;
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
@@ -432,13 +354,23 @@ onMounted(() => {
   gap: 0.5rem;
 }
 
+.title-icon {
+  font-size: 2.5rem;
+}
+
 .page-description {
   font-size: 1.2rem;
-  color: #7f8c8d;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .user-info-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
   margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .user-info {
@@ -450,13 +382,20 @@ onMounted(() => {
 }
 
 .user-details h3 {
-  color: #2c3e50;
+  color: white;
   margin-bottom: 0.5rem;
+  font-size: 1.5rem;
 }
 
 .user-details p {
-  color: #7f8c8d;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.1rem;
+  margin: 0.3rem 0;
+}
+
+.join-date {
+  font-size: 0.9rem !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .user-stats {
@@ -472,157 +411,233 @@ onMounted(() => {
   display: block;
   font-size: 2rem;
   font-weight: 700;
-  color: #3498db;
+  color: #00d4ff;
 }
 
 .stat-label {
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.promotion-card,
-.materials-card {
+.promotion-records-card,
+.statistics-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
   margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .card-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.promotion-link-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-.generator-form .el-form-item {
   margin-bottom: 1.5rem;
 }
 
-.generated-link {
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-  border: 2px dashed #3498db;
-}
-
-.generated-link h4 {
-  margin-bottom: 1rem;
-  color: #2c3e50;
-}
-
-.link-container {
-  margin-bottom: 1rem;
-}
-
-.link-actions {
+.card-header h2 {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-icon {
+  font-size: 1.5rem;
+}
+
+.record-btn {
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.record-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+}
+
+.record-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+.records-table {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-header {
+  background: rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 1rem;
-  justify-content: center;
+  padding: 1rem;
+  font-weight: 600;
+  color: white;
 }
 
-.materials-section {
-  space-y: 2rem;
+.table-body {
+  min-height: 200px;
 }
 
-.material-generator {
-  margin-bottom: 3rem;
+.table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  transition: background 0.3s ease;
 }
 
-.material-generator h4,
-.preset-materials h4 {
+.table-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.th, .td {
+  display: flex;
+  align-items: center;
+}
+
+.record-type {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.record-type.invitation {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.record-type.share {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.record-type.referral {
+  background: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+}
+
+.record-type.manual {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.record-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.record-status.success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.record-status.pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.record-status.failed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.reward-amount {
+  font-weight: 600;
+  color: #00d4ff;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
   margin-bottom: 1rem;
-  color: #2c3e50;
 }
 
-.materials-grid {
+.empty-tip {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
 }
 
-.material-item {
-  position: relative;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.material-item:hover {
-  transform: translateY(-5px);
-}
-
-.material-preview {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.material-info {
-  padding: 1rem;
-  background: white;
-}
-
-.material-name {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.material-size {
-  font-size: 0.9rem;
-  color: #7f8c8d;
-}
-
-.material-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(52, 152, 219, 0.9);
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  gap: 1rem;
+  transition: all 0.3s ease;
 }
 
-.material-item:hover .material-overlay {
-  opacity: 1;
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
 }
 
-.download-icon {
+.stat-icon {
+  font-size: 2.5rem;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
   font-size: 2rem;
-  color: white;
+  font-weight: 700;
+  color: #00d4ff;
+  margin-bottom: 0.3rem;
 }
 
-.qr-code-container {
-  text-align: center;
-}
-
-.qr-code {
-  margin-bottom: 1rem;
-}
-
-.qr-code-tip {
-  color: #7f8c8d;
-  margin-bottom: 1rem;
+.stat-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* 響應式設計 */
 @media (max-width: 768px) {
   .promote-page {
     padding: 1rem;
-  }
-  
-  .promotion-link-section {
-    grid-template-columns: 1fr;
   }
   
   .user-info {
@@ -634,8 +649,31 @@ onMounted(() => {
     justify-content: center;
   }
   
-  .link-actions {
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .th, .td {
+    justify-content: space-between;
+    padding: 0.5rem 0;
+  }
+  
+  .th::before, .td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-header {
     flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
   }
 }
 </style>
