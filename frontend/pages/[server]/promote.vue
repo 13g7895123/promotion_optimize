@@ -87,7 +87,7 @@
           </div>
           <div class="link-actions">
             <el-button @click="generateQRCode" type="success">
-              <el-icon><QrCode /></el-icon>
+              <el-icon><Qrcode /></el-icon>
               生成 QR Code
             </el-button>
             <el-button @click="shareToSocial" type="info">
@@ -189,7 +189,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import QRCode from 'qrcode'
 import { 
-  Promotion, Link, Magic, CopyDocument, QrCode, Share, 
+  Promotion, Link, Magic, CopyDocument, Qrcode, Share, 
   Picture, Camera, Download 
 } from '@element-plus/icons-vue'
 

@@ -40,3 +40,4 @@
     - 請幫我移除根目錄的內容，並弄一個精美的404給他
     - 輸入帳號的部分可以直接幫我改字體顏色就好嗎，不要改灰底背景，很醜
     - 為甚麼我點開始推廣後他沒有正常顯示應該要顯示的頁面
+16. 修復以下錯誤，"Global error handler: SyntaxError: The requested module 'http://localhost:9117/_nuxt/node_modules/.cache/vite/client/deps/@element-plus_icons-vue.js?v=02dce78e' doesn't provide an export named: 'QrCode' "
