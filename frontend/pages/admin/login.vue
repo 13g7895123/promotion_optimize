@@ -1,6 +1,15 @@
 <template>
   <div class="login-page">
-    <div class="login-form-container">
+    <!-- Background Elements -->
+    <div class="bg-decoration">
+      <div class="bg-circle bg-circle-1"></div>
+      <div class="bg-circle bg-circle-2"></div>
+      <div class="bg-circle bg-circle-3"></div>
+    </div>
+    
+    <!-- Login Card -->
+    <div class="login-card">
+      <div class="login-form-container">
       <el-form
         ref="loginFormRef"
         :model="loginForm"
@@ -9,12 +18,30 @@
         @submit.prevent="handleLogin"
       >
         <div class="form-header">
-          <h2>管理員登入</h2>
-          <p>請使用管理員帳號登入後台系統</p>
+          <div class="logo-section">
+            <div class="logo-icon">
+              <el-icon size="40"><Monitor /></el-icon>
+            </div>
+            <h2>管理員後台</h2>
+            <p>推廣平台管理系統</p>
+          </div>
+          
           <div class="demo-credentials">
-            <p><strong>測試帳號：</strong></p>
-            <p>用戶名：admin</p>
-            <p>密碼：admin123</p>
+            <div class="credentials-header">
+              <el-icon><InfoFilled /></el-icon>
+              <span>測試帳號資訊</span>
+            </div>
+            <div class="credentials-content">
+              <div class="credential-item">
+                <span class="label">用戶名：</span>
+                <span class="value">admin</span>
+                <el-button link size="small" @click="fillCredentials">快速填入</el-button>
+              </div>
+              <div class="credential-item">
+                <span class="label">密碼：</span>
+                <span class="value">admin123</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -71,15 +98,15 @@
         </el-form-item>
 
         <div class="form-footer">
-          <el-divider>或</el-divider>
-          <p>
-            還沒有帳號？
-            <el-link type="primary" @click="goToRegister">
-              立即註冊
+          <div class="back-to-frontend">
+            <el-link @click="goToFrontend" class="back-link">
+              <el-icon><ArrowLeft /></el-icon>
+              返回前台
             </el-link>
-          </p>
+          </div>
         </div>
       </el-form>
+      </div>
     </div>
 
     <!-- Forgot Password Dialog -->
@@ -128,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { User, Lock, Right, Message } from '@element-plus/icons-vue'
+import { User, Lock, Right, Message, Monitor, InfoFilled, ArrowLeft } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { LoginCredentials } from '~/types/auth'
 
@@ -206,6 +233,15 @@ const goToRegister = async () => {
   await navigateTo('/admin/register')
 }
 
+const goToFrontend = async () => {
+  await navigateTo('/')
+}
+
+const fillCredentials = () => {
+  loginForm.username = 'admin'
+  loginForm.password = 'admin123'
+}
+
 const showForgotPassword = () => {
   showForgotDialog.value = true
   forgotForm.email = ''
@@ -247,46 +283,167 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background decoration */
+.bg-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.bg-circle-1 {
+  width: 300px;
+  height: 300px;
+  top: -150px;
+  right: -150px;
+  animation: float 6s ease-in-out infinite;
+}
+
+.bg-circle-2 {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  left: -100px;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.bg-circle-3 {
+  width: 150px;
+  height: 150px;
+  top: 20%;
+  left: 10%;
+  animation: float 10s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Login card */
+.login-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
 }
 
 .login-form-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
+  padding: 40px;
 }
 
+/* Form header */
 .form-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
-.form-header h2 {
+.logo-section {
+  margin-bottom: 30px;
+}
+
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  margin: 0 auto 20px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.logo-section h2 {
   margin: 0 0 8px;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--el-text-color-primary);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.form-header p {
+.logo-section p {
   margin: 0;
-  color: var(--el-text-color-secondary);
-  font-size: 14px;
-  line-height: 1.5;
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 500;
 }
 
+/* Demo credentials */
 .demo-credentials {
-  background: #f0f9ff;
-  border: 1px solid #0ea5e9;
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
   text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.demo-credentials p {
-  margin: 4px 0;
-  font-size: 13px;
+.credentials-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #475569;
+  font-weight: 600;
+  font-size: 14px;
 }
 
+.credentials-content {
+  space-y: 12px;
+}
+
+.credential-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.credential-item .label {
+  color: #64748b;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.credential-item .value {
+  color: #1e293b;
+  font-weight: 600;
+  font-family: 'Monaco', 'Consolas', monospace;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 6px;
+  flex: 1;
+}
+
+/* Form styling */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -296,31 +453,59 @@ onMounted(() => {
 
 .login-button {
   width: 100%;
-  height: 48px;
+  height: 54px;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
 }
 
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+/* Form footer */
 .form-footer {
   text-align: center;
-  margin-top: 24px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
 }
 
-.form-footer p {
-  margin: 0;
-  color: var(--el-text-color-secondary);
-  font-size: 14px;
+.back-to-frontend {
+  display: flex;
+  justify-content: center;
+}
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.back-link:hover {
+  color: #475569;
+  background: #f1f5f9;
 }
 
 .forgot-description {
-  color: var(--el-text-color-secondary);
+  color: #64748b;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   margin-bottom: 24px;
 }
 
@@ -330,38 +515,104 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
-/* Form styling improvements */
+/* Enhanced form styling */
 :deep(.el-form-item) {
   margin-bottom: 24px;
 }
 
 :deep(.el-input) {
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 :deep(.el-input__wrapper) {
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
+
+:deep(.el-input__wrapper:hover) {
+  border-color: #667eea;
+  background: #ffffff;
+}
+
+:deep(.el-input__wrapper.is-focus) {
+  border-color: #667eea;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+:deep(.el-input__inner) {
+  font-size: 16px;
+  color: #1e293b;
+}
+
+:deep(.el-input__inner::placeholder) {
+  color: #94a3b8;
+}
+
+:deep(.el-checkbox__label) {
+  font-weight: 500;
+  color: #475569;
+}
+
+:deep(.el-link) {
+  font-weight: 600;
 }
 
 :deep(.el-button) {
-  border-radius: 8px;
+  border-radius: 12px;
+  font-weight: 600;
 }
 
 /* Mobile responsiveness */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .login-form-container {
-    padding: 0 16px;
+    padding: 30px 24px;
+    max-width: 90vw;
   }
   
-  .form-header h2 {
-    font-size: 24px;
+  .logo-section h2 {
+    font-size: 28px;
+  }
+  
+  .logo-icon {
+    width: 70px;
+    height: 70px;
   }
   
   .form-options {
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     align-items: flex-start;
+  }
+  
+  .bg-circle-1,
+  .bg-circle-2,
+  .bg-circle-3 {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form-container {
+    padding: 24px 20px;
+  }
+  
+  .demo-credentials {
+    padding: 16px;
+  }
+  
+  .credential-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .credential-item .value {
+    width: 100%;
   }
 }
 </style>
