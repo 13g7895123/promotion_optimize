@@ -83,7 +83,7 @@ services:
     container_name: promotion_frontend
     restart: unless-stopped
     environment:
-      API_BASE_URL: http://localhost:9017/api
+      API_BASE_URL: http://nginx/api
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
     ports:

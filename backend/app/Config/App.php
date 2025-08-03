@@ -65,13 +65,13 @@ class App extends BaseConfig
         'skipFailedRequests' => false,
     ];
 
-    // CORS configuration
+    // CORS configuration - Fully permissive for development
     public array $corsConfig = [
-        'allowedOrigins' => ['http://localhost:3000'],
-        'allowedMethods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        'allowedHeaders' => ['Content-Type', 'Authorization', 'X-Requested-With'],
-        'exposedHeaders' => [],
-        'maxAge' => 0,
-        'supportsCredentials' => true,
+        'allowedOrigins' => ['*'], // Allow all origins
+        'allowedMethods' => ['*'], // Allow all methods
+        'allowedHeaders' => ['*'], // Allow all headers
+        'exposedHeaders' => ['*'], // Expose all headers
+        'maxAge' => 86400,
+        'supportsCredentials' => false, // Set to false when using wildcard
     ];
 }

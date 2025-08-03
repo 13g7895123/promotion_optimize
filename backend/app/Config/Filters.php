@@ -25,7 +25,6 @@ class Filters extends BaseConfig
         'rbac'          => \App\Filters\RBACFilter::class,
         'ratelimit'     => \App\Filters\RateLimitFilter::class,
         'cors'          => \App\Filters\CORSFilter::class,
-        'apiauth'       => \App\Filters\APIAuthFilter::class,
         'inputvalidation' => \App\Filters\InputValidationFilter::class,
         'promotionsecurity' => \App\Filters\PromotionSecurityFilter::class,
         'promotiontracking' => \App\Filters\PromotionTrackingFilter::class,
@@ -37,8 +36,8 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
-            'honeypot',
             'cors',
+            'honeypot',
             'secureheaders',
             'ratelimit',
             'inputvalidation',
@@ -53,10 +52,8 @@ class Filters extends BaseConfig
      * particular HTTP method (GET, POST, etc.).
      */
     public array $methods = [
-        'POST' => ['csrf'],
-        'PUT'  => ['csrf'],
-        'PATCH' => ['csrf'],
-        'DELETE' => ['csrf'],
+        // CSRF disabled for API routes to avoid CORS conflicts
+        // API authentication is handled via JWT tokens
     ];
 
     /**

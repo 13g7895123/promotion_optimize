@@ -25,7 +25,13 @@
       "WebFetch(domain:cs.pcgame.tw)",
       "Bash(mv:*)",
       "Bash(rmdir:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run build:types:*)",
+      "Bash(npm run:*)",
+      "Bash(timeout 30 npm run build)",
+      "Bash(pkill:*)",
+      "Bash(npm install:*)"
     ],
     "deny": []
   }

@@ -68,18 +68,27 @@ export const useAuthStore = defineStore('auth', {
       
       try {
         const { $api } = useNuxtApp()
-        const response: ApiResponse<{
-          user: User
-          token: string
-          permissions: string[]
-          roles: string[]
-        }> = await $api('/auth/login', {
+        // Map frontend credentials to backend expected format
+        const loginData = {
+          login: credentials.username, // Backend expects 'login' field
+          password: credentials.password,
+          remember: credentials.remember
+        }
+        
+        const response = await $api('/auth/login', {
           method: 'POST',
-          body: credentials
+          body: loginData
         })
 
-        if (response.success && response.data) {
-          this.setAuth(response.data)
+        if (response.status === 'success' && response.data) {
+          // Backend returns { user, tokens } structure
+          const authData = {
+            user: response.data.user,
+            token: response.data.tokens.access_token,
+            permissions: response.data.user.permissions || [],
+            roles: response.data.user.roles || []
+          }
+          this.setAuth(authData)
           
           // Start token refresh mechanism
           if (process.client) {

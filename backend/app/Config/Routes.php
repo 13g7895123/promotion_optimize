@@ -190,6 +190,11 @@ $routes->group('api', ['namespace' => 'App\Controllers\API'], function ($routes)
     // Test endpoints (no authentication required)
     $routes->get('test', 'TestController::index');
     $routes->get('health', 'TestController::health');
+    
+    // CORS test endpoints
+    $routes->get('cors-test', 'CorsTestController::test');
+    $routes->post('cors-test', 'CorsTestController::testPost');
+    $routes->options('cors-test', 'CorsTestController::options');
 });
 
 /*

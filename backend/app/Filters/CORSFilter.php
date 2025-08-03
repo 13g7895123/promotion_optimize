@@ -24,19 +24,30 @@ class CORSFilter implements FilterInterface
         $response = service('response');
         $origin = $request->getHeaderLine('Origin');
 
-        // Check if origin is allowed
-        if ($origin && in_array($origin, $corsConfig['allowedOrigins'])) {
-            $response->setHeader('Access-Control-Allow-Origin', $origin);
-        } elseif (in_array('*', $corsConfig['allowedOrigins'])) {
+        // Handle wildcard or specific origins
+        if (in_array('*', $corsConfig['allowedOrigins'])) {
             $response->setHeader('Access-Control-Allow-Origin', '*');
+        } elseif ($origin && in_array($origin, $corsConfig['allowedOrigins'])) {
+            $response->setHeader('Access-Control-Allow-Origin', $origin);
         }
 
-        // Set CORS headers
-        $response->setHeader('Access-Control-Allow-Methods', implode(', ', $corsConfig['allowedMethods']));
-        $response->setHeader('Access-Control-Allow-Headers', implode(', ', $corsConfig['allowedHeaders']));
+        // Set CORS headers - handle wildcards
+        if (in_array('*', $corsConfig['allowedMethods'])) {
+            $response->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD');
+        } else {
+            $response->setHeader('Access-Control-Allow-Methods', implode(', ', $corsConfig['allowedMethods']));
+        }
         
-        if (!empty($corsConfig['exposedHeaders'])) {
+        if (in_array('*', $corsConfig['allowedHeaders'])) {
+            $response->setHeader('Access-Control-Allow-Headers', '*');
+        } else {
+            $response->setHeader('Access-Control-Allow-Headers', implode(', ', $corsConfig['allowedHeaders']));
+        }
+        
+        if (!empty($corsConfig['exposedHeaders']) && !in_array('*', $corsConfig['exposedHeaders'])) {
             $response->setHeader('Access-Control-Expose-Headers', implode(', ', $corsConfig['exposedHeaders']));
+        } elseif (in_array('*', $corsConfig['exposedHeaders'])) {
+            $response->setHeader('Access-Control-Expose-Headers', '*');
         }
 
         if ($corsConfig['supportsCredentials']) {
