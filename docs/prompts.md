@@ -12,4 +12,4 @@
 8. 幫我調整ci-cd.yml的檔案，原先是laravel的，幫我改成ci4的
 9. CD出現錯誤，請排除他，錯誤內容請看error/08162016.txt
 10. 後端登入會出現錯誤，幫我確認是否為API端引起的，或是前後端串接的問題
-11. 請幫我把後端直接改為domain"http://promotion.mercylife.cc/api"，用nginx一堆問題你又修不好
+11. 請幫我把後端直接改為domain"https://promotion.mercylife.cc/api"，用nginx一堆問題你又修不好
