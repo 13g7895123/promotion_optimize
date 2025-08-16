@@ -5,3 +5,5 @@
     - "git如果有commit的部分，內容請幫我依據基本規則加在前面例如(fix: 'content')"，寫入CLAUDE.md
 2. 幫我實作CD的部分
 3. 請檢查專案是否有git repo，有的話依規則執行add commit push
+4. CD出現錯誤，請排除他，錯誤內容請看error/08161908.txt
+5. 為甚麼任務完成沒有執行add commit push，幫我確認原因並加入CLAUDE.md，避免再次發生

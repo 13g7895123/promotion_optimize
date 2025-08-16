@@ -28,13 +28,11 @@ jobs:
         extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql
         coverage: none
         
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm ci
-      
     - name: Build frontend
       working-directory: ./frontend
-      run: npm run build
+      run: |
+        npm ci
+        npm run build
       
     - name: Install backend dependencies
       working-directory: ./backend

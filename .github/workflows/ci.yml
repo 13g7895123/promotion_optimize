@@ -127,6 +127,8 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./frontend
+        file: ./frontend/Dockerfile.prod
+        target: production
         push: false
         tags: promotion-frontend:test
         
@@ -134,5 +136,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./backend
+        file: ./backend/Dockerfile.prod
+        target: production
         push: false
         tags: promotion-backend:test

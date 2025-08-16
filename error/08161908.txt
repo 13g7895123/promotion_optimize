@@ -1,0 +1,29 @@
+ > [frontend 4/5] RUN npm install --omit=dev && npm cache clean --force:
+40.91 npm error code 1
+40.91 npm error path /app
+40.91 npm error command failed
+40.91 npm error command sh -c nuxt prepare
+40.92 npm notice
+40.92 npm notice New major version of npm available! 10.8.2 -> 11.5.2
+40.92 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+40.92 npm notice To update run: npm install -g npm@11.5.2
+40.92 npm notice
+40.92 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-08-16T11_06_11_039Z-debug-0.log
+------
+Dockerfile:10
+
+--------------------
+
+   8 |
+
+   9 |     # Install dependencies
+
+  10 | >>> RUN npm install --omit=dev && npm cache clean --force
+
+  11 |
+
+  12 |     # Create app directory with proper permissions
+
+--------------------
+
+target frontend: failed to solve: process "/bin/sh -c npm install --omit=dev && npm cache clean --force" did not complete successfully: exit code: 1
