@@ -151,6 +151,9 @@
 - **重要**: 請勿在提交中新增 Claude 共同作者註腳
 - 使用清晰簡潔的提交訊息
 - 遵循 Git Flow 工作流程
+- **自動提交**: 每次任務完成，如果有連結git repo，都幫我依據規則提交
+- **提交格式**: add commit push，記得不要加上「Generated with Claude Code」的標記
+- **提交前綴**: git如果有commit的部分，內容請幫我依據基本規則加在前面例如(fix: 'content')
 
 ### 前端開發規範
 - 遵循 SOLID 原則進行程式設計
