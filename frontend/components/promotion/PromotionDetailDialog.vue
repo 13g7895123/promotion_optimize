@@ -130,7 +130,7 @@
           
           <div class="stat-card">
             <div class="stat-icon rewards">
-              <el-icon><Gift /></el-icon>
+              <el-icon><Present /></el-icon>
             </div>
             <div class="stat-info">
               <div class="stat-value">{{ formatNumber(statistics.total_rewards_given) }}</div>
@@ -210,7 +210,7 @@ import {
   User,
   Trophy,
   TrendCharts,
-  Gift,
+  Present,
   DataAnalysis,
   Clock,
   Download,

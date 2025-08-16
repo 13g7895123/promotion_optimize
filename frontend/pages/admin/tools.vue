@@ -138,7 +138,7 @@
                   </el-option>
                   <el-option label="道具" value="items">
                     <div class="reward-option">
-                      <el-icon><Gift /></el-icon>
+                      <el-icon><Present /></el-icon>
                       <span>道具</span>
                     </div>
                   </el-option>
@@ -463,7 +463,7 @@ import {
   Picture,
   Share,
   Star,
-  Gift,
+  Present,
   Trophy,
   Coin,
   Plus,
@@ -829,11 +829,11 @@ const getRewardTypeText = (type: string) => {
 const getRewardIcon = (type: string) => {
   const iconMap: Record<string, any> = {
     'points': Star,
-    'items': Gift,
+    'items': Present,
     'experience': Trophy,
     'currency': Coin,
   }
-  return iconMap[type] || Gift
+  return iconMap[type] || Present
 }
 
 const formatRewardText = () => {

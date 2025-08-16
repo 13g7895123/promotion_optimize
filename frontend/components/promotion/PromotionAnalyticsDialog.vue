@@ -288,7 +288,7 @@ import {
   Download,
   Monitor,
   Iphone,
-  Tablet,
+  Monitor as Tablet,
 } from '@element-plus/icons-vue'
 import type { Promotion, PromotionAnalytics, ChartData } from '~/types'
 
@@ -528,7 +528,7 @@ const getDeviceIcon = (device: string) => {
   const iconMap: Record<string, any> = {
     'desktop': Monitor,
     'mobile': Iphone,
-    'tablet': Tablet,
+    'tablet': Monitor as Tablet,
   }
   return iconMap[device.toLowerCase()] || Monitor
 }

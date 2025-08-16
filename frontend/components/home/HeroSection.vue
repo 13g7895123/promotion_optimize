@@ -146,7 +146,7 @@ import {
   Trophy as IconTrophy,
   Users as IconUsers,
   Star as IconStar,
-  Gift as IconGift
+  Present as IconGift
 } from '@element-plus/icons-vue'
 
 interface Feature {

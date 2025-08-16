@@ -195,7 +195,7 @@ import {
   Trophy,
   Coin,
   Star,
-  Gift,
+  Present,
 } from '@element-plus/icons-vue'
 import type { Promotion, PromotionStatistics } from '~/types'
 
@@ -337,11 +337,11 @@ const getRewardTypeText = (type: string) => {
 const getRewardIcon = (type: string) => {
   const iconMap: Record<string, any> = {
     'points': Star,
-    'items': Gift,
+    'items': Present,
     'experience': Trophy,
     'currency': Coin,
   }
-  return iconMap[type] || Gift
+  return iconMap[type] || Present
 }
 
 const formatRewardValue = (value: number, type: string) => {

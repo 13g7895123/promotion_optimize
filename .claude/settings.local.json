@@ -34,7 +34,8 @@
       "Bash(npm install:*)",
       "Bash(touch:*)",
       "Bash(composer show:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

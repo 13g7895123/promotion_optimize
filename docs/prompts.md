@@ -7,3 +7,4 @@
 3. 請檢查專案是否有git repo，有的話依規則執行add commit push
 4. CD出現錯誤，請排除他，錯誤內容請看error/08161908.txt
 5. 為甚麼任務完成沒有執行add commit push，幫我確認原因並加入CLAUDE.md，避免再次發生
+6. CD出現錯誤，請排除他，錯誤內容請看error/08161923.txt
