@@ -1,0 +1,11 @@
+#27 [backend] resolving provenance for metadata file
+#27 DONE 0.1s
+ promotion_optimize-backend  Built
+ promotion_optimize-frontend  Built
+ Container promotion_redis  Running
+ Container promotion_mysql  Running
+ Container promotion_backend  Running
+ Container promotion_frontend  Running
+執行migrate
+Could not open input file: spark
+Error: Process completed with exit code 1.
