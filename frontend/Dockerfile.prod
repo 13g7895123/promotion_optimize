@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies for build)
-RUN npm install
+# Clean install all dependencies (including devDependencies for build)
+RUN rm -rf node_modules package-lock.json && npm install
 
 # Copy source code
 COPY . .
@@ -25,8 +25,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm install --omit=dev && npm cache clean --force
+# Clean install only production dependencies
+RUN rm -rf node_modules package-lock.json && npm install --omit=dev && npm cache clean --force
 
 # Create app directory with proper permissions
 RUN addgroup -g 1001 -S nodejs && \

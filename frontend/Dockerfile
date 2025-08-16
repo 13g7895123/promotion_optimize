@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install && npm cache clean --force
+# Clean install dependencies
+RUN rm -rf node_modules package-lock.json && npm install && npm cache clean --force
 
 # Create app directory with proper permissions
 RUN addgroup -g 1001 -S nodejs && \
