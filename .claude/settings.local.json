@@ -35,7 +35,8 @@
       "Bash(touch:*)",
       "Bash(composer show:*)",
       "Bash(docker exec:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(docker compose logs:*)"
     ],
     "deny": []
   }
