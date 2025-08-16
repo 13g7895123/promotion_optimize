@@ -9,3 +9,4 @@
 5. 為甚麼任務完成沒有執行add commit push，幫我確認原因並加入CLAUDE.md，避免再次發生
 6. CD出現錯誤，請排除他，錯誤內容請看error/08161923.txt
 7. CD出現錯誤，請排除他，錯誤內容請看error/08161945.txt
+8. 幫我調整ci-cd.yml的檔案，原先是laravel的，幫我改成ci4的

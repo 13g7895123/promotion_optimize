@@ -117,21 +117,19 @@ jobs:
               sleep 30
               
               # 執行資料庫遷移（僅在後端重新啟動時）
-              docker compose exec -T backend php artisan migrate --force
+              docker compose exec -T backend php spark migrate
               
               # 執行資料庫填充（如果需要）
-              docker compose exec -T backend php artisan db:seed --force --class=RolesAndPermissionsSeeder
+              docker compose exec -T backend php spark db:seed RolesAndPermissionsSeeder
             fi
 
             # 每次都執行migrate
             echo "執行migrate"
-            docker compose exec -T backend php artisan migrate --force
+            docker compose exec -T backend php spark migrate
             
             # 清除快取（每次部署都執行）
             echo "🧹 清除應用程式快取..."
-            docker compose exec -T backend php artisan config:cache
-            docker compose exec -T backend php artisan route:cache
-            docker compose exec -T backend php artisan view:cache
+            docker compose exec -T backend php spark cache:clear
             
             # 最終部署驗證
             echo "========================================="
