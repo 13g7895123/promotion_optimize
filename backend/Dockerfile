@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -35,7 +35,7 @@ RUN mkdir -p storage/logs storage/cache storage/session storage/uploads \
 # COPY . .
 
 # Expose port
-EXPOSE 9000
+EXPOSE 8080
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Start CodeIgniter 4 spark serve
+CMD ["php", "spark", "serve", "--host", "0.0.0.0", "--port", "8080"]

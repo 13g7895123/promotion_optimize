@@ -65,7 +65,7 @@ services:
       APP_ENV: ${APP_ENV}
       APP_DEBUG: ${APP_DEBUG}
     ports:
-      - "${BACKEND_PORT}:9000"
+      - "${BACKEND_PORT}:8080"
     volumes:
       - ./backend:/var/www/html
       - ./backend/storage:/var/www/html/storage
@@ -83,7 +83,7 @@ services:
     container_name: promotion_frontend
     restart: unless-stopped
     environment:
-      API_BASE_URL: http://nginx/api
+      API_BASE_URL: https://promotion.mercylife.cc/api
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
     ports:
@@ -95,21 +95,6 @@ services:
       - /app/dist
     depends_on:
       - backend
-    networks:
-      - promotion_network
-
-  nginx:
-    image: nginx:alpine
-    container_name: promotion_nginx
-    restart: unless-stopped
-    ports:
-      - "${NGINX_PORT}:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./backend:/var/www/html
-    depends_on:
-      - backend
-      - frontend
     networks:
       - promotion_network
 
