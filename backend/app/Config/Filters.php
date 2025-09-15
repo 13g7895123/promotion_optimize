@@ -43,6 +43,7 @@ class Filters extends BaseConfig
             'inputvalidation',
         ],
         'after' => [
+            'cors',
             'toolbar',
         ],
     ];

@@ -67,10 +67,41 @@ class CORSFilter implements FilterInterface
     }
 
     /**
-     * Handle CORS in response
+     * Handle CORS in response - Ensure CORS headers are always set
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
+        $config = config('App');
+        $corsConfig = $config->corsConfig;
+        $origin = $request->getHeaderLine('Origin');
+
+        // Ensure CORS headers are set even for error responses (like 404)
+        if ($origin) {
+            // Handle wildcard or specific origins
+            if (in_array('*', $corsConfig['allowedOrigins'])) {
+                $response->setHeader('Access-Control-Allow-Origin', '*');
+            } elseif (in_array($origin, $corsConfig['allowedOrigins'])) {
+                $response->setHeader('Access-Control-Allow-Origin', $origin);
+            }
+
+            // Set other CORS headers
+            if (in_array('*', $corsConfig['allowedMethods'])) {
+                $response->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD');
+            } else {
+                $response->setHeader('Access-Control-Allow-Methods', implode(', ', $corsConfig['allowedMethods']));
+            }
+
+            if (in_array('*', $corsConfig['allowedHeaders'])) {
+                $response->setHeader('Access-Control-Allow-Headers', '*');
+            } else {
+                $response->setHeader('Access-Control-Allow-Headers', implode(', ', $corsConfig['allowedHeaders']));
+            }
+
+            if ($corsConfig['supportsCredentials']) {
+                $response->setHeader('Access-Control-Allow-Credentials', 'true');
+            }
+        }
+
         return $response;
     }
 }

@@ -65,13 +65,34 @@ class App extends BaseConfig
         'skipFailedRequests' => false,
     ];
 
-    // CORS configuration - Fully permissive for development
+    // CORS configuration - Environment specific settings
     public array $corsConfig = [
-        'allowedOrigins' => ['*'], // Allow all origins
-        'allowedMethods' => ['*'], // Allow all methods
-        'allowedHeaders' => ['*'], // Allow all headers
-        'exposedHeaders' => ['*'], // Expose all headers
+        'allowedOrigins' => [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:9117',
+            'http://127.0.0.1:3000',
+            'http://127.0.0.1:3001',
+            'http://127.0.0.1:9117',
+            'https://promotion.mercylife.cc',
+            'https://admin.promotion.mercylife.cc'
+        ],
+        'allowedMethods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'],
+        'allowedHeaders' => [
+            'Origin',
+            'Content-Type',
+            'Accept',
+            'Authorization',
+            'X-Requested-With',
+            'X-CSRF-TOKEN',
+            'X-API-KEY'
+        ],
+        'exposedHeaders' => [
+            'Authorization',
+            'X-Total-Count',
+            'X-Page-Count'
+        ],
         'maxAge' => 86400,
-        'supportsCredentials' => false, // Set to false when using wildcard
+        'supportsCredentials' => true,
     ];
 }
