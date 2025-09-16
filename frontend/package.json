@@ -5,7 +5,10 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --port 3304",
+    "dev:local": "cross-env NODE_ENV=development API_BASE_URL=http://localhost:9217/api nuxt dev --port 3304",
+    "dev:production": "cross-env NODE_ENV=production API_BASE_URL=https://promotion.mercylife.cc/api nuxt dev --port 3304",
+    "build:production": "cross-env NODE_ENV=production API_BASE_URL=https://promotion.mercylife.cc/api nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@types/qrcode": "^1.5.5",
+    "cross-env": "^7.0.3",
     "nuxt": "^3.18.0",
     "sass-embedded": "^1.90.0",
     "typescript": "^5.4.0",

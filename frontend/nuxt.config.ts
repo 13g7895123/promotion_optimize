@@ -16,7 +16,11 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBase: process.env.API_BASE_URL || 'https://promotion.mercylife.cc/api'
+      apiBase: process.env.API_BASE_URL || (
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:9217/api'
+          : 'https://promotion.mercylife.cc/api'
+      )
     }
   },
   // TypeScript configuration

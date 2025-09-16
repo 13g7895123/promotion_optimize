@@ -18,4 +18,4 @@
 14. 後台登入頁有CORS的問題，已封鎖跨來源請求: 同源政策不允許讀取 https://promotion.mercylife.cc/api/auth/login 的遠端資源。（原因: 缺少 CORS 'Access-Control-Allow-Origin' 檔頭）。狀態代碼: 404。，先幫我調整一下，我要有local開發的環境，所以幫我完整調整，且不影響推上去的遠端環境
 15. Missing script: "dev:local"
 16. 已封鎖跨來源請求: 同源政策不允許讀取 https://promotion.mercylife.cc/api/auth/login 的遠端資源。（原因: 缺少 CORS 'Access-Control-Allow-Origin' 檔頭）。狀態代碼: 404。還是一樣，而且我的前端是3304 port耶，是不是搞錯了，等等，我這是local環境欸，理論上不應該吃到遠端的API吧，幫我確認是哪裡的問題
-17. 我用npm run dev:local，他說npm error Missing script: "dev:local"
+17. 為甚麼會在admin_template，幫我保留一個frontend就好，移除admin_template
