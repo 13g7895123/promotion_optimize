@@ -52,6 +52,7 @@ services:
       dockerfile: Dockerfile
     container_name: promotion_backend
     restart: unless-stopped
+    command: ["sh", "-c", "cd /var/www/html && php -S 0.0.0.0:8080 -t public"]
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}

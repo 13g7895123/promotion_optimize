@@ -8,7 +8,7 @@ use CodeIgniter\Session\Handlers\FileHandler;
 class App extends BaseConfig
 {
     public string $baseURL = 'http://localhost:8080/';
-    public string $allowedHostnames = '';
+    public array $allowedHostnames = [];
     public string $indexPage = '';
     public string $uriProtocol = 'REQUEST_URI';
     public string $defaultLocale = 'en';
@@ -19,8 +19,8 @@ class App extends BaseConfig
     public bool $forceGlobalSecureRequests = false;
     public int $sessionExpiration = 7200;
     public string $sessionSavePath = WRITEPATH . 'session';
-    public string $sessionMatchIP = false;
-    public string $sessionTimeToUpdate = 300;
+    public bool $sessionMatchIP = false;
+    public int $sessionTimeToUpdate = 300;
     public bool $sessionRegenerateDestroy = false;
     public string $sessionDriver = FileHandler::class;
     public string $cookieDomain = '';
@@ -37,7 +37,7 @@ class App extends BaseConfig
     public bool $CSRFRedirect = true;
     public ?string $CSRFSameSite = 'Lax';
     public bool $CSPEnabled = false;
-    public array $permittedURIChars = 'a-z 0-9~%.:_\-';
+    public string $permittedURIChars = 'a-z 0-9~%.:_\-';
     public string $defaultController = 'Home';
     public string $defaultMethod = 'index';
     public bool $translateURIDashes = false;
