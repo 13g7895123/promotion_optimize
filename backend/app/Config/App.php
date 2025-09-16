@@ -70,9 +70,11 @@ class App extends BaseConfig
         'allowedOrigins' => [
             'http://localhost:3000',
             'http://localhost:3001',
+            'http://localhost:3304',
             'http://localhost:9117',
             'http://127.0.0.1:3000',
             'http://127.0.0.1:3001',
+            'http://127.0.0.1:3304',
             'http://127.0.0.1:9117',
             'https://promotion.mercylife.cc',
             'https://admin.promotion.mercylife.cc'
