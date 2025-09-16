@@ -84,7 +84,7 @@ services:
     container_name: promotion_frontend
     restart: unless-stopped
     environment:
-      API_BASE_URL: https://promotion.mercylife.cc/api
+      API_BASE_URL: http://localhost:9217/api
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
     ports:
