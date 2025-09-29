@@ -37,7 +37,9 @@
       "Bash(docker exec:*)",
       "Bash(sed:*)",
       "Bash(docker compose logs:*)",
-      "Bash(del \"D:\\Jarvis\\10_idea\\promotion\\admin_template\\package.json.new\")"
+      "Bash(del \"D:\\Jarvis\\10_idea\\promotion\\admin_template\\package.json.new\")",
+      "Bash(cp:*)",
+      "Bash(docker compose:*)"
     ],
     "deny": []
   }

@@ -5,6 +5,8 @@ namespace Config;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Debug\ExceptionHandler;
 use CodeIgniter\Debug\ExceptionHandlerInterface;
+use Psr\Log\LogLevel;
+use Throwable;
 
 /**
  * Setup how the exception handler works.
@@ -12,53 +14,93 @@ use CodeIgniter\Debug\ExceptionHandlerInterface;
 class Exceptions extends BaseConfig
 {
     /**
-     * The class to use as the Exception Handler.
-     */
-    public string $handler = ExceptionHandler::class;
-
-    /**
-     * An array of the exception types that should NOT be logged.
-     * By default, exceptions that are not considered critical issues
-     * are ignored.
-     */
-    public array $ignoreCodes = [404];
-
-    /**
-     * Should the Exception Handler log exceptions?
+     * --------------------------------------------------------------------------
+     * LOG EXCEPTIONS?
+     * --------------------------------------------------------------------------
+     * If true, then exceptions will be logged
+     * through Services::Log.
+     *
+     * Default: true
      */
     public bool $log = true;
 
     /**
-     * List of sensitive data to hide from backtraces.
-     * Used by the default exception handler.
+     * --------------------------------------------------------------------------
+     * DO NOT LOG STATUS CODES
+     * --------------------------------------------------------------------------
+     * Any status codes here will NOT be logged if logging is turned on.
+     * By default, only 404 (Page Not Found) exceptions are ignored.
+     *
+     * @var list<int>
      */
-    public array $sensitiveDataInTrace = [
-        'password',
-        'passwd',
-        'pass',
-        'token',
-        'key',
-        'secret',
-        'authorization'
-    ];
+    public array $ignoreCodes = [404];
 
     /**
-     * Specify the context to show in stack trace previews.
+     * --------------------------------------------------------------------------
+     * Error Views Path
+     * --------------------------------------------------------------------------
+     * This is the path to the directory that contains the 'cli' and 'html'
+     * directories that hold the views used to generate errors.
+     *
+     * Default: APPPATH.'Views/errors'
      */
-    public int $traceContext = 5;
+    public string $errorViewPath = APPPATH . 'Views/errors';
 
     /**
-     * Use flat array in error template instead of objects
+     * --------------------------------------------------------------------------
+     * HIDE FROM DEBUG TRACE
+     * --------------------------------------------------------------------------
+     * Any data that you would like to hide from the debug trace.
+     * In order to specify 2 levels, use "/" to separate.
+     * ex. ['server', 'setup/password', 'secret_token']
+     *
+     * @var list<string>
+     */
+    public array $sensitiveDataInTrace = [];
+
+    /**
+     * --------------------------------------------------------------------------
+     * WHETHER TO THROW AN EXCEPTION ON DEPRECATED ERRORS
+     * --------------------------------------------------------------------------
+     * If set to `true`, DEPRECATED errors are only logged and no exceptions are
+     * thrown. This option also works for user deprecations.
      */
     public bool $logDeprecations = true;
 
     /**
-     * Set this to the log level for deprecation logging.
+     * --------------------------------------------------------------------------
+     * LOG LEVEL THRESHOLD FOR DEPRECATIONS
+     * --------------------------------------------------------------------------
+     * If `$logDeprecations` is set to `true`, this sets the log level
+     * to which the deprecation will be logged. This should be one of the log
+     * levels recognized by PSR-3.
+     *
+     * The related `Config\Logger::$threshold` should be adjusted, if needed,
+     * to capture logging the deprecations.
      */
-    public string $deprecationLogLevel = 'error';
+    public string $deprecationLogLevel = LogLevel::WARNING;
 
-    /**
-     * Path to the error views directory.
+    /*
+     * DEFINE THE HANDLERS USED
+     * --------------------------------------------------------------------------
+     * Given the HTTP status code, returns exception handler that
+     * should be used to deal with this error. By default, it will run CodeIgniter's
+     * default handler and display the error information in the expected format
+     * for CLI, HTTP, or AJAX requests, as determined by is_cli() and the expected
+     * response format.
+     *
+     * Custom handlers can be returned if you want to handle one or more specific
+     * error codes yourself like:
+     *
+     *      if (in_array($statusCode, [400, 404, 500])) {
+     *          return new \App\Libraries\MyExceptionHandler();
+     *      }
+     *      if ($exception instanceOf PageNotFoundException) {
+     *          return new \App\Libraries\MyExceptionHandler();
+     *      }
      */
-    public string $errorViewPath = '';
+    public function handler(int $statusCode, Throwable $exception): ExceptionHandlerInterface
+    {
+        return new ExceptionHandler($this);
+    }
 }
