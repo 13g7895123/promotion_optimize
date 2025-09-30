@@ -74,10 +74,10 @@ export const useAuthStore = defineStore('auth', {
           password: credentials.password,
           remember: credentials.remember
         }
-        
+
         const response = await $api('/auth/login', {
           method: 'POST',
-          body: loginData
+          body: JSON.stringify(loginData)
         })
 
         if (response.status === 'success' && response.data) {
