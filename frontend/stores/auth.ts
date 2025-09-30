@@ -51,10 +51,11 @@ export const useAuthStore = defineStore('auth', {
      * Get user role level for dashboard routing
      */
     userRoleLevel: (state) => {
-      if (state.roles.includes('超管')) return 'super_admin'
-      if (state.roles.includes('管理員')) return 'admin'
-      if (state.roles.includes('服主')) return 'server_owner'
-      if (state.roles.includes('審核員')) return 'reviewer'
+      // Support both English and Chinese role names
+      if (state.roles.includes('super_admin') || state.roles.includes('超管')) return 'super_admin'
+      if (state.roles.includes('admin') || state.roles.includes('管理員')) return 'admin'
+      if (state.roles.includes('server_owner') || state.roles.includes('服主')) return 'server_owner'
+      if (state.roles.includes('reviewer') || state.roles.includes('審核員')) return 'reviewer'
       return 'user'
     }
   },
