@@ -47,38 +47,60 @@ export const useAuthStore = defineStore('auth', () => {
   // 登入功能
   const login = async (credentials) => {
     try {
-      // 模擬 API 延遲
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 查找用戶
-      const foundUser = mockUsers.value.find(u => 
-        (u.username === credentials.username || u.email === credentials.username) &&
-        u.password === credentials.password
-      )
-      
-      if (!foundUser) {
-        throw new Error('用戶名或密碼錯誤')
+      const config = useRuntimeConfig()
+
+      // 呼叫真實 API
+      const response = await $fetch(`${config.public.apiBase}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          login: credentials.username,
+          password: credentials.password
+        },
+        credentials: 'include'
+      })
+
+      if (response.status !== 'success') {
+        throw new Error(response.message || '登入失敗')
       }
-      
-      if (foundUser.status === 'inactive') {
-        throw new Error('帳戶已被停用')
+
+      const userData = response.data.user
+      const tokens = response.data.tokens
+
+      // 處理角色資料
+      const userRole = userData.roles?.[0]?.name || 'user'
+
+      // 設定用戶資料
+      const userForStore = {
+        id: userData.id,
+        username: userData.username,
+        email: userData.email,
+        name: `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || userData.username,
+        role: userRole,
+        avatar: userData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.username)}&background=6366f1&color=fff`,
+        status: userData.status,
+        roles: userData.roles,
+        lastLogin: userData.last_login_at,
+        createdAt: userData.created_at
       }
-      
-      // 更新最後登入時間
-      foundUser.lastLogin = new Date()
-      
-      // 設定用戶資料 (不包含密碼)
-      const { password, ...userWithoutPassword } = foundUser
-      user.value = userWithoutPassword
-      
+
+      user.value = userForStore
+
       // 儲存到 localStorage
       if (process.client) {
-        localStorage.setItem('admin-template-user', JSON.stringify(userWithoutPassword))
+        localStorage.setItem('admin-template-user', JSON.stringify(userForStore))
+        localStorage.setItem('admin-template-token', tokens.access_token)
+        if (tokens.refresh_token) {
+          localStorage.setItem('admin-template-refresh-token', tokens.refresh_token)
+        }
       }
-      
-      return { success: true, user: userWithoutPassword }
+
+      return { success: true, user: userForStore }
     } catch (error) {
-      throw error
+      console.error('Login error:', error)
+      throw new Error(error.data?.message || error.message || '登入失敗')
     }
   }
 
@@ -131,12 +153,14 @@ export const useAuthStore = defineStore('auth', () => {
   // 登出功能
   const logout = () => {
     user.value = null
-    
+
     // 清除 localStorage
     if (process.client) {
       localStorage.removeItem('admin-template-user')
+      localStorage.removeItem('admin-template-token')
+      localStorage.removeItem('admin-template-refresh-token')
     }
-    
+
     // 重定向到登入頁面
     navigateTo('/auth/login')
   }
