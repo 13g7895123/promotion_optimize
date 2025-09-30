@@ -82,11 +82,14 @@ export const useAuthStore = defineStore('auth', {
 
         if (response.status === 'success' && response.data) {
           // Backend returns { user, tokens } structure
+          const backendRoles = response.data.user.roles || []
+          const roleNames = backendRoles.map((role: any) => role.name || role)
+
           const authData = {
             user: response.data.user,
             token: response.data.tokens.access_token,
             permissions: response.data.user.permissions || [],
-            roles: response.data.user.roles || []
+            roles: roleNames
           }
           this.setAuth(authData)
           
