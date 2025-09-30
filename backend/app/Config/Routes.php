@@ -9,6 +9,12 @@ $routes->get('/', 'Home::index');
 
 // API Routes
 $routes->group('api', ['namespace' => 'App\Controllers\API'], function($routes) {
+    // CORS Preflight - Handle OPTIONS for all routes
+    $routes->options('(:any)', function() {
+        $response = service('response');
+        return $response->setStatusCode(200);
+    });
+
     // Auth Routes
     $routes->post('auth/register', 'AuthController::register');
     $routes->post('auth/login', 'AuthController::login');
@@ -18,6 +24,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\API'], function($routes) 
     // Test Routes
     $routes->get('test', 'TestController::index');
     $routes->get('cors-test', 'CorsTestController::test');
+    $routes->post('cors-test', 'CorsTestController::testPost');
 
     // Protected Routes (require authentication)
     $routes->group('', ['filter' => 'auth'], function($routes) {

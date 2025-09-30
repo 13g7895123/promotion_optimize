@@ -199,4 +199,20 @@ class App extends BaseConfig
      * @see http://www.w3.org/TR/CSP/
      */
     public bool $CSPEnabled = false;
+
+    /**
+     * --------------------------------------------------------------------------
+     * JWT Configuration
+     * --------------------------------------------------------------------------
+     *
+     * Configuration for JWT (JSON Web Token) authentication.
+     *
+     * @var array
+     */
+    public array $jwtConfig = [
+        'secretKey' => 'your_jwt_secret_here_change_in_production',
+        'algorithm' => 'HS256',
+        'expiration' => 3600, // 1 hour
+        'refreshExpiration' => 604800, // 7 days
+    ];
 }
