@@ -4,12 +4,12 @@
 
 ## 快速開始
 
-### 開發環境
+### 方式一：Docker 開發環境 (推薦)
 
 1. **克隆專案**
    ```bash
    git clone <repository-url>
-   cd promotion
+   cd promotion_optimize
    ```
 
 2. **環境配置**
@@ -20,13 +20,58 @@
 
 3. **啟動開發環境**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 4. **訪問應用**
-   - 前端: http://localhost:9017
-   - 後端 API: http://localhost:9017/api
+   - 前端: http://localhost:9117
+   - 後端 API: http://localhost:9217/api
    - phpMyAdmin: http://localhost:9517
+
+### 方式二：本地前端開發 (npm run dev)
+
+適合只需要開發前端，使用 Docker 後端服務的場景。
+
+1. **確保後端已啟動**
+   ```bash
+   docker compose up -d backend mysql redis
+   ```
+
+2. **安裝前端依賴**
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+3. **啟動前端開發服務器**
+   ```bash
+   # 標準模式 (Port 3000)
+   npm run dev
+
+   # 本地開發模式 (Port 3304 + 連接本地後端) - 推薦
+   npm run dev:local
+   ```
+
+4. **訪問前端**
+   - 標準模式: http://localhost:3000
+   - 本地開發模式: http://localhost:3304
+
+📖 **詳細說明**: 查看 [本地開發指南](docs/local-development.md)
+
+### 測試環境
+
+使用獨立端口的測試環境，可與開發環境同時運行：
+
+```bash
+# 啟動測試環境
+./test.sh
+
+# 訪問測試環境
+# 前端: http://localhost:8117
+# 後端: http://localhost:8217/api
+```
+
+📖 **詳細說明**: 查看 [測試環境說明](TEST_ENVIRONMENT.md)
 
 ### 生產環境部署
 
