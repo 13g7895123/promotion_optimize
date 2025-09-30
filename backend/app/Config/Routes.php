@@ -15,9 +15,13 @@ $routes->group('api', ['namespace' => 'App\Controllers\API'], function($routes) 
         return $response->setStatusCode(200);
     });
 
-    // Auth Routes
+    // Auth Routes - Simple (Working)
+    $routes->post('auth/login', 'SimpleAuthController::login');
+    $routes->get('auth/me', 'SimpleAuthController::me');
+
+    // Auth Routes - Complex (Original - may have issues)
     $routes->post('auth/register', 'AuthController::register');
-    $routes->post('auth/login', 'AuthController::login');
+    $routes->post('auth/login-original', 'AuthController::login');
     $routes->post('auth/logout', 'AuthController::logout');
     $routes->post('auth/refresh', 'AuthController::refresh');
 
