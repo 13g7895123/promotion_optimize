@@ -288,23 +288,23 @@ export const useAuthStore = defineStore('auth', {
      */
     canAccessRoute(route: string): boolean {
       if (!this.isAuthenticated) return false
-      
-      // Define route permissions
+
+      // Define route permissions (support both English and Chinese role names)
       const routePermissions: Record<string, string[]> = {
-        '/admin': ['超管', '管理員'],
-        '/server': ['超管', '管理員', '服主'],
-        '/reviewer': ['超管', '管理員', '審核員'],
-        '/promotion': ['超管', '管理員', '服主', '用戶'],
-        '/dashboard': ['超管', '管理員', '服主', '審核員', '用戶']
+        '/admin': ['super_admin', 'admin', '超管', '管理員'],
+        '/server': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主'],
+        '/reviewer': ['super_admin', 'admin', 'reviewer', '超管', '管理員', '審核員'],
+        '/promotion': ['super_admin', 'admin', 'server_owner', 'user', '超管', '管理員', '服主', '用戶'],
+        '/dashboard': ['super_admin', 'admin', 'server_owner', 'reviewer', 'user', '超管', '管理員', '服主', '審核員', '用戶']
       }
-      
+
       // Check if route requires specific roles
       for (const [path, requiredRoles] of Object.entries(routePermissions)) {
         if (route.startsWith(path)) {
           return this.hasAnyRole(requiredRoles)
         }
       }
-      
+
       return true
     }
   }

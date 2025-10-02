@@ -45,56 +45,56 @@ export const usePermissions = () => {
    * Check if user is admin level (超管 or 管理員)
    */
   const isAdmin = (): boolean => {
-    return hasAnyRole(['超管', '管理員'])
+    return hasAnyRole(['super_admin', 'admin', '超管', '管理員'])
   }
 
   /**
    * Check if user is super admin
    */
   const isSuperAdmin = (): boolean => {
-    return hasRole('超管')
+    return hasAnyRole(['super_admin', '超管'])
   }
 
   /**
    * Check if user is server owner
    */
   const isServerOwner = (): boolean => {
-    return hasRole('服主')
+    return hasAnyRole(['server_owner', '服主'])
   }
 
   /**
    * Check if user is reviewer
    */
   const isReviewer = (): boolean => {
-    return hasRole('審核員')
+    return hasAnyRole(['reviewer', '審核員'])
   }
 
   /**
    * Check if user can manage servers
    */
   const canManageServers = (): boolean => {
-    return hasAnyRole(['超管', '管理員', '服主'])
+    return hasAnyRole(['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主'])
   }
 
   /**
    * Check if user can review promotions
    */
   const canReviewPromotions = (): boolean => {
-    return hasAnyRole(['超管', '管理員', '審核員'])
+    return hasAnyRole(['super_admin', 'admin', 'reviewer', '超管', '管理員', '審核員'])
   }
 
   /**
    * Check if user can manage users
    */
   const canManageUsers = (): boolean => {
-    return hasAnyRole(['超管', '管理員'])
+    return hasAnyRole(['super_admin', 'admin', '超管', '管理員'])
   }
 
   /**
    * Check if user can view admin panel
    */
   const canViewAdminPanel = (): boolean => {
-    return hasAnyRole(['超管', '管理員'])
+    return hasAnyRole(['super_admin', 'admin', '超管', '管理員'])
   }
 
   /**
@@ -113,7 +113,7 @@ export const usePermissions = () => {
         title: '個人資料',
         path: '/profile',
         icon: 'User',
-        roles: ['超管', '管理員', '服主', '審核員', '用戶']
+        roles: ['super_admin', 'admin', 'server_owner', 'reviewer', 'user', '超管', '管理員', '服主', '審核員', '用戶']
       }
     ]
 
@@ -123,31 +123,31 @@ export const usePermissions = () => {
         title: '儀表板',
         path: '/dashboard',
         icon: 'Odometer',
-        roles: ['超管', '管理員', '服主', '審核員', '用戶']
+        roles: ['super_admin', 'admin', 'server_owner', 'reviewer', 'user', '超管', '管理員', '服主', '審核員', '用戶']
       },
       {
         title: '推廣管理',
         path: '/promotion',
         icon: 'Share',
-        roles: ['超管', '管理員', '服主', '用戶']
+        roles: ['super_admin', 'admin', 'server_owner', 'user', '超管', '管理員', '服主', '用戶']
       },
       {
         title: '伺服器管理',
         path: '/server',
         icon: 'Server',
-        roles: ['超管', '管理員', '服主']
+        roles: ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主']
       },
       {
         title: '審核管理',
         path: '/reviewer',
         icon: 'Document',
-        roles: ['超管', '管理員', '審核員']
+        roles: ['super_admin', 'admin', 'reviewer', '超管', '管理員', '審核員']
       },
       {
         title: '系統管理',
         path: '/admin',
         icon: 'Setting',
-        roles: ['超管', '管理員']
+        roles: ['super_admin', 'admin', '超管', '管理員']
       }
     ]
 
@@ -160,6 +160,11 @@ export const usePermissions = () => {
    */
   const getRoleDisplayName = (role: string): string => {
     const roleMap: Record<string, string> = {
+      'super_admin': '超級管理員',
+      'admin': '管理員',
+      'server_owner': '伺服器主人',
+      'reviewer': '審核員',
+      'user': '一般用戶',
       '超管': '超級管理員',
       '管理員': '管理員',
       '服主': '伺服器主人',
@@ -174,6 +179,11 @@ export const usePermissions = () => {
    */
   const getRoleColor = (role: string): string => {
     const colorMap: Record<string, string> = {
+      'super_admin': 'danger',
+      'admin': 'warning',
+      'server_owner': 'primary',
+      'reviewer': 'success',
+      'user': 'info',
       '超管': 'danger',
       '管理員': 'warning',
       '服主': 'primary',
@@ -187,35 +197,35 @@ export const usePermissions = () => {
    * Check if user can perform action on resource
    */
   const canPerformAction = (action: string, resource: string): boolean => {
-    // Define permission matrix
+    // Define permission matrix (support both English and Chinese role names)
     const permissionMatrix: Record<string, Record<string, string[]>> = {
       'create': {
-        'server': ['超管', '管理員'],
-        'user': ['超管', '管理員'],
-        'promotion': ['超管', '管理員', '服主', '用戶'],
-        'event': ['超管', '管理員', '服主']
+        'server': ['super_admin', 'admin', '超管', '管理員'],
+        'user': ['super_admin', 'admin', '超管', '管理員'],
+        'promotion': ['super_admin', 'admin', 'server_owner', 'user', '超管', '管理員', '服主', '用戶'],
+        'event': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主']
       },
       'read': {
-        'server': ['超管', '管理員', '服主'],
-        'user': ['超管', '管理員'],
-        'promotion': ['超管', '管理員', '服主', '審核員', '用戶'],
-        'event': ['超管', '管理員', '服主', '用戶']
+        'server': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主'],
+        'user': ['super_admin', 'admin', '超管', '管理員'],
+        'promotion': ['super_admin', 'admin', 'server_owner', 'reviewer', 'user', '超管', '管理員', '服主', '審核員', '用戶'],
+        'event': ['super_admin', 'admin', 'server_owner', 'user', '超管', '管理員', '服主', '用戶']
       },
       'update': {
-        'server': ['超管', '管理員', '服主'],
-        'user': ['超管', '管理員'],
-        'promotion': ['超管', '管理員', '服主'],
-        'event': ['超管', '管理員', '服主']
+        'server': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主'],
+        'user': ['super_admin', 'admin', '超管', '管理員'],
+        'promotion': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主'],
+        'event': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主']
       },
       'delete': {
-        'server': ['超管', '管理員'],
-        'user': ['超管', '管理員'],
-        'promotion': ['超管', '管理員'],
-        'event': ['超管', '管理員', '服主']
+        'server': ['super_admin', 'admin', '超管', '管理員'],
+        'user': ['super_admin', 'admin', '超管', '管理員'],
+        'promotion': ['super_admin', 'admin', '超管', '管理員'],
+        'event': ['super_admin', 'admin', 'server_owner', '超管', '管理員', '服主']
       },
       'review': {
-        'promotion': ['超管', '管理員', '審核員'],
-        'server': ['超管', '管理員']
+        'promotion': ['super_admin', 'admin', 'reviewer', '超管', '管理員', '審核員'],
+        'server': ['super_admin', 'admin', '超管', '管理員']
       }
     }
 
