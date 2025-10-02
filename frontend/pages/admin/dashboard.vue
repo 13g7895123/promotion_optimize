@@ -118,6 +118,15 @@ onMounted(async () => {
   padding: 0;
 }
 
+/* 強制內容區域文字為黑色 */
+.dashboard-content {
+  color: #000000 !important;
+}
+
+.dashboard-content * {
+  color: #000000 !important;
+}
+
 .dashboard-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 32px;
@@ -135,13 +144,13 @@ onMounted(async () => {
   margin: 0 0 8px;
   font-size: 28px;
   font-weight: 700;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .welcome-subtitle {
   margin: 0;
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9) !important;
   display: flex;
   align-items: center;
   gap: 8px;
