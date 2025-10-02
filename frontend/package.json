@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --port 3305",
-    "dev:local": "cross-env NODE_ENV=development API_BASE_URL=http://localhost:9217/api nuxt dev --port 3305",
-    "dev:production": "cross-env NODE_ENV=production API_BASE_URL=https://promotion.mercylife.cc/api nuxt dev --port 3305",
+    "dev": "nuxt dev --port 3307",
+    "dev:local": "cross-env NODE_ENV=development API_BASE_URL=http://localhost:9217/api nuxt dev --port 3307",
+    "dev:production": "cross-env NODE_ENV=production API_BASE_URL=https://promotion.mercylife.cc/api nuxt dev --port 3307",
     "build:production": "cross-env NODE_ENV=production API_BASE_URL=https://promotion.mercylife.cc/api nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
