@@ -403,23 +403,23 @@ const handleQuickAction = (action: any) => {
 }
 
 .overview-card.primary .card-icon {
-  background: var(--el-color-primary-light-8);
-  color: var(--el-color-primary);
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
 }
 
 .overview-card.success .card-icon {
-  background: var(--el-color-success-light-8);
-  color: var(--el-color-success);
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
 }
 
 .overview-card.warning .card-icon {
-  background: var(--el-color-warning-light-8);
-  color: var(--el-color-warning);
+  background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%);
+  color: #b45309;
 }
 
 .overview-card.info .card-icon {
-  background: var(--el-color-info-light-8);
-  color: var(--el-color-info);
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
 }
 
 .card-info {
@@ -549,13 +549,13 @@ const handleQuickAction = (action: any) => {
 }
 
 .item-icon.server {
-  background: var(--el-color-success-light-8);
-  color: var(--el-color-success);
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
 }
 
 .item-icon.promotion {
-  background: var(--el-color-warning-light-8);
-  color: var(--el-color-warning);
+  background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%);
+  color: #b45309;
 }
 
 .item-content {
@@ -645,23 +645,23 @@ const handleQuickAction = (action: any) => {
 }
 
 .action-icon.primary {
-  background: var(--el-color-primary-light-8);
-  color: var(--el-color-primary);
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
 }
 
 .action-icon.success {
-  background: var(--el-color-success-light-8);
-  color: var(--el-color-success);
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
 }
 
 .action-icon.warning {
-  background: var(--el-color-warning-light-8);
-  color: var(--el-color-warning);
+  background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%);
+  color: #b45309;
 }
 
 .action-icon.info {
-  background: var(--el-color-info-light-8);
-  color: var(--el-color-info);
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: #0369a1;
 }
 
 .action-content {
