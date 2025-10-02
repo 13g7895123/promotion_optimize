@@ -160,33 +160,33 @@ onMounted(async () => {
 }
 
 .role-badge.role-danger {
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  color: #dc2626;
-  border-color: #fca5a5;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #ffffff;
+  border-color: #dc2626;
 }
 
 .role-badge.role-warning {
-  background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-  color: #d97706;
-  border-color: #fde047;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border-color: #f59e0b;
 }
 
 .role-badge.role-primary {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  color: #2563eb;
-  border-color: #93c5fd;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  border-color: #3b82f6;
 }
 
 .role-badge.role-success {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  color: #16a34a;
-  border-color: #86efac;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-color: #10b981;
 }
 
 .role-badge.role-info {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  color: #0284c7;
-  border-color: #7dd3fc;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: #ffffff;
+  border-color: #06b6d4;
 }
 
 .quick-actions {
