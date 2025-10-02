@@ -408,7 +408,8 @@ class Home extends Controller
     {
         try {
             $db = \Config\Database::connect();
-            return $db->initialize();
+            $db->initialize();
+            return $db->connID !== false;
         } catch (\Exception $e) {
             return false;
         }

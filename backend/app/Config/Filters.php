@@ -34,6 +34,10 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => \App\Filters\SessionAuthFilter::class,
+        'jwt-auth'      => \App\Filters\JWTAuthFilter::class,
+        'rbac'          => \App\Filters\RBACFilter::class,
+        'ratelimit'     => \App\Filters\RateLimitFilter::class,
     ];
 
     /**
