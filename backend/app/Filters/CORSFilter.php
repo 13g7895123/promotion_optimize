@@ -18,8 +18,7 @@ class CORSFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $config = config('App');
-        $corsConfig = $config->corsConfig;
+        $corsConfig = config('Cors')->default;
 
         $response = service('response');
         $origin = $request->getHeaderLine('Origin');
@@ -71,8 +70,7 @@ class CORSFilter implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        $config = config('App');
-        $corsConfig = $config->corsConfig;
+        $corsConfig = config('Cors')->default;
         $origin = $request->getHeaderLine('Origin');
 
         // Ensure CORS headers are set even for error responses (like 404)
