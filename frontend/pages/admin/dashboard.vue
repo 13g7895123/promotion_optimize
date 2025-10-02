@@ -119,7 +119,7 @@ onMounted(async () => {
 }
 
 .dashboard-header {
-  background: linear-gradient(135deg, var(--el-color-primary-light-7) 0%, var(--el-color-primary-light-8) 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 32px;
   border-radius: 12px;
   margin-bottom: 24px;
@@ -128,19 +128,20 @@ onMounted(async () => {
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
 }
 
 .welcome-section h1 {
   margin: 0 0 8px;
   font-size: 28px;
   font-weight: 700;
-  color: var(--el-text-color-primary);
+  color: #ffffff;
 }
 
 .welcome-subtitle {
   margin: 0;
   font-size: 16px;
-  color: var(--el-text-color-secondary);
+  color: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -148,31 +149,44 @@ onMounted(async () => {
 }
 
 .role-badge {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
-  color: white;
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .role-badge.role-danger {
-  background: var(--el-color-danger);
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #dc2626;
+  border-color: #fca5a5;
 }
 
 .role-badge.role-warning {
-  background: var(--el-color-warning);
+  background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+  color: #d97706;
+  border-color: #fde047;
 }
 
 .role-badge.role-primary {
-  background: var(--el-color-primary);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #2563eb;
+  border-color: #93c5fd;
 }
 
 .role-badge.role-success {
-  background: var(--el-color-success);
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #16a34a;
+  border-color: #86efac;
 }
 
 .role-badge.role-info {
-  background: var(--el-color-info);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: #0284c7;
+  border-color: #7dd3fc;
 }
 
 .quick-actions {
