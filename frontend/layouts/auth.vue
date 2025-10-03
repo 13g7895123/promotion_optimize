@@ -35,6 +35,9 @@
 
 <script setup lang="ts">
 import { Platform } from '@element-plus/icons-vue'
+
+// 載入後台專用樣式（認證頁面使用後台風格）
+import '~/assets/css/admin.css'
 </script>
 
 <style scoped>

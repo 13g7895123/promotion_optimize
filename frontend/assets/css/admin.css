@@ -1,0 +1,217 @@
+/*
+ * 後台專用樣式
+ * 現代化管理介面主題
+ */
+
+/* 全域樣式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* 後台主題色彩 */
+  --admin-primary: #3b82f6;
+  --admin-primary-dark: #2563eb;
+  --admin-primary-light: #60a5fa;
+  --admin-success: #10b981;
+  --admin-warning: #f59e0b;
+  --admin-danger: #ef4444;
+  --admin-info: #06b6d4;
+
+  /* 背景色彩 */
+  --admin-bg-primary: #ffffff;
+  --admin-bg-secondary: #f8fafc;
+  --admin-bg-tertiary: #f1f5f9;
+  --admin-bg-card: #ffffff;
+
+  /* 文字色彩 */
+  --admin-text-primary: #1e293b;
+  --admin-text-secondary: #64748b;
+  --admin-text-muted: #94a3b8;
+
+  /* 邊框色彩 */
+  --admin-border-primary: #e2e8f0;
+  --admin-border-secondary: #cbd5e1;
+
+  /* 陰影效果 */
+  --admin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --admin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.admin-layout {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  color: var(--admin-text-primary);
+  background: var(--admin-bg-secondary);
+}
+
+/* 卡片樣式 */
+.admin-card {
+  background: var(--admin-bg-card);
+  border: 1px solid var(--admin-border-primary);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: var(--admin-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.admin-card:hover {
+  box-shadow: var(--admin-shadow-md);
+}
+
+/* 按鈕樣式 */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-btn-primary {
+  background: var(--admin-primary);
+  color: #ffffff;
+}
+
+.admin-btn-primary:hover {
+  background: var(--admin-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.admin-btn-success {
+  background: var(--admin-success);
+  color: #ffffff;
+}
+
+.admin-btn-success:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.admin-btn-warning {
+  background: var(--admin-warning);
+  color: #ffffff;
+}
+
+.admin-btn-warning:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.admin-btn-danger {
+  background: var(--admin-danger);
+  color: #ffffff;
+}
+
+.admin-btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--admin-shadow-md);
+}
+
+/* 輸入框樣式 */
+.admin-input {
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--admin-bg-primary);
+  border: 1px solid var(--admin-border-primary);
+  border-radius: 6px;
+  color: var(--admin-text-primary);
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.admin-input::placeholder {
+  color: var(--admin-text-muted);
+}
+
+/* 表格樣式 */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--admin-bg-card);
+}
+
+.admin-table th {
+  background: var(--admin-bg-tertiary);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+  border-bottom: 1px solid var(--admin-border-primary);
+}
+
+.admin-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--admin-border-primary);
+  color: var(--admin-text-primary);
+}
+
+.admin-table tr:hover {
+  background: var(--admin-bg-secondary);
+}
+
+/* 徽章樣式 */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.admin-badge-primary {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--admin-primary);
+}
+
+.admin-badge-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--admin-success);
+}
+
+.admin-badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--admin-warning);
+}
+
+.admin-badge-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--admin-danger);
+}
+
+/* 分隔線 */
+.admin-divider {
+  height: 1px;
+  background: var(--admin-border-primary);
+  margin: 16px 0;
+}
+
+/* 強制文字顏色 - 避免被其他樣式覆蓋 */
+.admin-layout,
+.admin-layout *:not(.dashboard-header):not(.dashboard-header *) {
+  color: var(--admin-text-primary) !important;
+}
+
+/* 保留標題區域的白色文字 */
+.admin-layout .dashboard-header,
+.admin-layout .dashboard-header * {
+  color: inherit !important;
+}

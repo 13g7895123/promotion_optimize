@@ -39,6 +39,9 @@
 import { Monitor, View, User } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 
+// 載入後台專用樣式
+import '~/assets/css/admin.css'
+
 const router = useRouter()
 
 // 導航到前台

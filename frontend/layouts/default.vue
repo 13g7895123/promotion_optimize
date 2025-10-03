@@ -5,6 +5,9 @@
 </template>
 
 <script setup lang="ts">
+// 載入前台專用樣式
+import '~/assets/css/frontend.css'
+
 // 純粹的前台佈局 - 無後台管理邏輯
 </script>
 

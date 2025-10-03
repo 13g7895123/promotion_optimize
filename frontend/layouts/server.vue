@@ -18,6 +18,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
+// 載入前台專用樣式（科技風）
+import '~/assets/css/frontend.css'
+import '~/assets/css/server-pages.css'
+
 // 響應式數據
 const particleCanvas = ref<HTMLCanvasElement>()
 let animationId: number | null = null

@@ -10,9 +10,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt'
   ],
   css: [
-    '~/assets/css/main.css',
-    '~/assets/css/theme-integration.css',
-    '~/assets/css/responsive.css'
+    // CSS 已改為在各 layout 中按需載入，避免前後台樣式混用
+    '~/assets/css/responsive.css'  // 通用響應式樣式
   ],
   runtimeConfig: {
     public: {
