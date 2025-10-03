@@ -488,7 +488,6 @@ onMounted(() => {
 }
 
 .login-form-container {
-  width: 100%;
   max-width: 450px;
   padding: 40px;
 }
