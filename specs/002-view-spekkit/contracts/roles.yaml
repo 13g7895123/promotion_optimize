@@ -1,0 +1,980 @@
+openapi: 3.0.0
+info:
+  title: Role & Permission Management API
+  version: 1.0.0
+  description: |
+    Role and permission management endpoints for the Game Server Promotion Platform.
+    Handles role CRUD operations, permission assignments, and role-permission relationships.
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.promotion-platform.com/v1
+    description: Production server
+
+paths:
+  /roles:
+    get:
+      summary: List all roles
+      description: Retrieve all system roles with optional filtering
+      operationId: listRoles
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by role status
+          schema:
+            type: string
+            enum: [active, inactive]
+        - name: include_permissions
+          in: query
+          description: Include associated permissions
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Roles retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleListResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Roles retrieved successfully"
+                    data:
+                      roles:
+                        - id: 1
+                          name: "Super Admin"
+                          code: "super_admin"
+                          level: 1
+                          description: "Full system access"
+                          status: "active"
+                          created_at: "2025-10-01T00:00:00Z"
+                        - id: 2
+                          name: "Admin"
+                          code: "admin"
+                          level: 2
+                          description: "Administrative access"
+                          status: "active"
+                          created_at: "2025-10-01T00:00:00Z"
+                        - id: 3
+                          name: "Server Owner"
+                          code: "server_owner"
+                          level: 3
+                          description: "Manage own servers"
+                          status: "active"
+                          created_at: "2025-10-01T00:00:00Z"
+                        - id: 4
+                          name: "Reviewer"
+                          code: "reviewer"
+                          level: 4
+                          description: "Review and approve content"
+                          status: "active"
+                          created_at: "2025-10-01T00:00:00Z"
+                        - id: 5
+                          name: "User"
+                          code: "user"
+                          level: 5
+                          description: "Regular user access"
+                          status: "active"
+                          created_at: "2025-10-01T00:00:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new role
+      description: Create a new role with specified permissions (super admin only)
+      operationId: createRole
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleRequest'
+            examples:
+              basic:
+                value:
+                  name: "Content Manager"
+                  code: "content_manager"
+                  level: 4
+                  description: "Manage content and promotions"
+                  permission_ids: [15, 16, 17, 18]
+      responses:
+        '201':
+          description: Role created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Role created successfully"
+                    data:
+                      role:
+                        id: 6
+                        name: "Content Manager"
+                        code: "content_manager"
+                        level: 4
+                        description: "Manage content and promotions"
+                        status: "active"
+                        permissions:
+                          - id: 15
+                            resource: "promotions"
+                            action: "create"
+                            code: "promotions.create"
+                          - id: 16
+                            resource: "promotions"
+                            action: "view"
+                            code: "promotions.view"
+                        created_at: "2025-10-08T15:00:00Z"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /roles/{id}:
+    get:
+      summary: Get role by ID
+      description: Retrieve detailed information about a specific role
+      operationId: getRoleById
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDetailResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Role retrieved successfully"
+                    data:
+                      role:
+                        id: 3
+                        name: "Server Owner"
+                        code: "server_owner"
+                        level: 3
+                        description: "Manage own servers"
+                        status: "active"
+                        permissions:
+                          - id: 7
+                            resource: "servers"
+                            action: "create"
+                            code: "servers.create"
+                          - id: 8
+                            resource: "servers"
+                            action: "update"
+                            code: "servers.update"
+                          - id: 9
+                            resource: "servers"
+                            action: "view"
+                            code: "servers.view"
+                        user_count: 42
+                        created_at: "2025-10-01T00:00:00Z"
+                        updated_at: "2025-10-08T10:00:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update role
+      description: Update role information and permissions (super admin only)
+      operationId: updateRole
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoleRequest'
+            examples:
+              basic:
+                value:
+                  name: "Updated Server Owner"
+                  description: "Manage own servers and promotions"
+                  status: "active"
+      responses:
+        '200':
+          description: Role updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete role
+      description: Soft delete a role (super admin only, cannot delete if assigned to users)
+      operationId: deleteRole
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Role deleted successfully"
+                    data: {}
+        '400':
+          description: Cannot delete role (still assigned to users)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                in_use:
+                  value:
+                    status: "error"
+                    message: "Cannot delete role that is assigned to users"
+                    errors:
+                      user_count: 15
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /roles/{id}/permissions:
+    get:
+      summary: Get role permissions
+      description: Retrieve all permissions assigned to a role
+      operationId: getRolePermissions
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role permissions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionListResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Role permissions retrieved"
+                    data:
+                      permissions:
+                        - id: 7
+                          resource: "servers"
+                          action: "create"
+                          code: "servers.create"
+                          description: "Create new servers"
+                        - id: 8
+                          resource: "servers"
+                          action: "update"
+                          code: "servers.update"
+                          description: "Update server information"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Assign permissions to role
+      description: Add one or more permissions to a role (super admin only)
+      operationId: assignPermissionsToRole
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignPermissionsRequest'
+            examples:
+              basic:
+                value:
+                  permission_ids: [15, 16, 17]
+      responses:
+        '200':
+          description: Permissions assigned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Permissions assigned successfully"
+                    data:
+                      role_id: 3
+                      permissions_assigned: [15, 16, 17]
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /roles/{id}/permissions/{permissionId}:
+    delete:
+      summary: Remove permission from role
+      description: Remove a specific permission from a role (super admin only)
+      operationId: removePermissionFromRole
+      tags:
+        - Roles
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+        - name: permissionId
+          in: path
+          required: true
+          description: Permission ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Permission removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Permission removed successfully"
+                    data: {}
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /permissions:
+    get:
+      summary: List all permissions
+      description: Retrieve all available system permissions
+      operationId: listPermissions
+      tags:
+        - Permissions
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: resource
+          in: query
+          description: Filter by resource
+          schema:
+            type: string
+            enum: [users, roles, servers, promotions, rewards, statistics, settings]
+        - name: action
+          in: query
+          description: Filter by action
+          schema:
+            type: string
+            enum: [create, view, update, delete, approve, manage]
+      responses:
+        '200':
+          description: Permissions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionListResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Permissions retrieved successfully"
+                    data:
+                      permissions:
+                        - id: 1
+                          resource: "users"
+                          action: "create"
+                          code: "users.create"
+                          description: "Create new users"
+                        - id: 2
+                          resource: "users"
+                          action: "view"
+                          code: "users.view"
+                          description: "View user information"
+                        - id: 3
+                          resource: "users"
+                          action: "update"
+                          code: "users.update"
+                          description: "Update user information"
+                        - id: 4
+                          resource: "users"
+                          action: "delete"
+                          code: "users.delete"
+                          description: "Delete users"
+                        - id: 5
+                          resource: "roles"
+                          action: "manage"
+                          code: "roles.manage"
+                          description: "Manage roles and permissions"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new permission
+      description: Create a new system permission (super admin only)
+      operationId: createPermission
+      tags:
+        - Permissions
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePermissionRequest'
+            examples:
+              basic:
+                value:
+                  resource: "reports"
+                  action: "export"
+                  description: "Export reports and analytics"
+      responses:
+        '201':
+          description: Permission created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Permission created successfully"
+                    data:
+                      permission:
+                        id: 50
+                        resource: "reports"
+                        action: "export"
+                        code: "reports.export"
+                        description: "Export reports and analytics"
+                        created_at: "2025-10-08T15:00:00Z"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /permissions/{id}:
+    get:
+      summary: Get permission by ID
+      description: Retrieve detailed information about a specific permission
+      operationId: getPermissionById
+      tags:
+        - Permissions
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Permission ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Permission retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update permission
+      description: Update permission details (super admin only)
+      operationId: updatePermission
+      tags:
+        - Permissions
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Permission ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePermissionRequest'
+            examples:
+              basic:
+                value:
+                  description: "Updated permission description"
+      responses:
+        '200':
+          description: Permission updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete permission
+      description: Delete a permission (super admin only, cannot delete if assigned to roles)
+      operationId: deletePermission
+      tags:
+        - Permissions
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Permission ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Permission deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Cannot delete permission (still assigned to roles)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    SessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_token
+
+  schemas:
+    CreateRoleRequest:
+      type: object
+      required:
+        - name
+        - code
+        - level
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          description: Display name of the role
+        code:
+          type: string
+          maxLength: 50
+          pattern: '^[a-z_]+$'
+          description: Unique code identifier (lowercase, underscores)
+        level:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: Role hierarchy level (1=highest, 10=lowest)
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+        permission_ids:
+          type: array
+          items:
+            type: integer
+          description: Array of permission IDs to assign
+
+    UpdateRoleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive]
+
+    AssignPermissionsRequest:
+      type: object
+      required:
+        - permission_ids
+      properties:
+        permission_ids:
+          type: array
+          items:
+            type: integer
+          minItems: 1
+
+    CreatePermissionRequest:
+      type: object
+      required:
+        - resource
+        - action
+      properties:
+        resource:
+          type: string
+          maxLength: 50
+          description: Resource name (e.g., users, servers, promotions)
+        action:
+          type: string
+          maxLength: 50
+          description: Action name (e.g., create, view, update, delete)
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+
+    UpdatePermissionRequest:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 255
+          nullable: true
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        level:
+          type: integer
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    RoleWithPermissions:
+      allOf:
+        - $ref: '#/components/schemas/Role'
+        - type: object
+          properties:
+            permissions:
+              type: array
+              items:
+                $ref: '#/components/schemas/Permission'
+
+    RoleWithStats:
+      allOf:
+        - $ref: '#/components/schemas/RoleWithPermissions'
+        - type: object
+          properties:
+            user_count:
+              type: integer
+              description: Number of users with this role
+
+    Permission:
+      type: object
+      properties:
+        id:
+          type: integer
+        resource:
+          type: string
+        action:
+          type: string
+        code:
+          type: string
+          description: "Generated code in format: resource.action"
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    RoleListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            roles:
+              type: array
+              items:
+                $ref: '#/components/schemas/Role'
+
+    RoleResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            role:
+              $ref: '#/components/schemas/RoleWithPermissions'
+
+    RoleDetailResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            role:
+              $ref: '#/components/schemas/RoleWithStats'
+
+    PermissionListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            permissions:
+              type: array
+              items:
+                $ref: '#/components/schemas/Permission'
+
+    PermissionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            permission:
+              $ref: '#/components/schemas/Permission'
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties: true
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    ValidationError:
+      description: Validation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

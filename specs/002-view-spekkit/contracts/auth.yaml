@@ -1,0 +1,654 @@
+openapi: 3.0.0
+info:
+  title: Authentication API
+  version: 1.0.0
+  description: |
+    Authentication and authorization endpoints for the Game Server Promotion Platform.
+    Handles user registration, login, logout, token refresh, and current user information.
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.promotion-platform.com/v1
+    description: Production server
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      description: Creates a new user account with username, email, and password
+      operationId: register
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            examples:
+              basic:
+                summary: Basic registration
+                value:
+                  username: "john_doe"
+                  email: "john@example.com"
+                  password: "SecurePass123"
+                  password_confirmation: "SecurePass123"
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Registration successful"
+                    data:
+                      user:
+                        id: 1
+                        username: "john_doe"
+                        email: "john@example.com"
+                        role: "user"
+                        created_at: "2025-10-08T10:30:00Z"
+                      access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refresh_token: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+                      expires_in: 3600
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_error:
+                  value:
+                    status: "error"
+                    message: "Validation failed"
+                    errors:
+                      email: ["Email is already registered"]
+                      password: ["Password must be at least 8 characters"]
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticate user with username/email and password
+      operationId: login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              username_login:
+                summary: Login with username
+                value:
+                  username: "john_doe"
+                  password: "SecurePass123"
+              email_login:
+                summary: Login with email
+                value:
+                  email: "john@example.com"
+                  password: "SecurePass123"
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              description: Session token cookie
+              schema:
+                type: string
+                example: "session_token=abc123; Path=/; HttpOnly; Secure; SameSite=Strict"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Login successful"
+                    data:
+                      user:
+                        id: 1
+                        username: "john_doe"
+                        email: "john@example.com"
+                        role: "user"
+                        last_login: "2025-10-08T10:30:00Z"
+                      access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refresh_token: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+                      expires_in: 3600
+        '401':
+          description: Invalid credentials or account locked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_credentials:
+                  value:
+                    status: "error"
+                    message: "Invalid username or password"
+                    errors: {}
+                account_locked:
+                  value:
+                    status: "error"
+                    message: "Account locked due to multiple failed login attempts. Please try again in 30 minutes."
+                    errors:
+                      locked_until: "2025-10-08T11:00:00Z"
+        '429':
+          description: Too many login attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      summary: User logout
+      description: Invalidate current session and clear authentication tokens
+      operationId: logout
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Logout successful"
+                    data: {}
+        '401':
+          description: Unauthorized - no valid session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Generate a new access token using a valid refresh token
+      operationId: refreshToken
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+            examples:
+              basic:
+                value:
+                  refresh_token: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Token refreshed successfully"
+                    data:
+                      access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      refresh_token: "bmV3IHJlZnJlc2ggdG9rZW4..."
+                      expires_in: 3600
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_token:
+                  value:
+                    status: "error"
+                    message: "Invalid or expired refresh token"
+                    errors: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/me:
+    get:
+      summary: Get current user information
+      description: Retrieve authenticated user's profile and permissions
+      operationId: getCurrentUser
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "User information retrieved"
+                    data:
+                      user:
+                        id: 1
+                        username: "john_doe"
+                        email: "john@example.com"
+                        full_name: "John Doe"
+                        phone: "+886912345678"
+                        line_id: "john_line"
+                        discord_id: "john#1234"
+                        avatar: "https://cdn.example.com/avatars/john.jpg"
+                        roles:
+                          - id: 3
+                            name: "Server Owner"
+                            code: "server_owner"
+                            level: 3
+                        permissions:
+                          - "servers.create"
+                          - "servers.update"
+                          - "servers.view"
+                          - "promotions.create"
+                          - "promotions.view"
+                        created_at: "2025-10-08T10:30:00Z"
+                        last_login: "2025-10-08T14:30:00Z"
+        '401':
+          description: Unauthorized - no valid session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/forgot-password:
+    post:
+      summary: Request password reset
+      description: Send password reset link to user's email
+      operationId: forgotPassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's registered email address
+            examples:
+              basic:
+                value:
+                  email: "john@example.com"
+      responses:
+        '200':
+          description: Password reset email sent (always returns success for security)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "If the email exists, a password reset link has been sent"
+                    data: {}
+        '429':
+          description: Too many password reset requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/reset-password:
+    post:
+      summary: Reset password with token
+      description: Reset user password using the token from email
+      operationId: resetPassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - password
+                - password_confirmation
+              properties:
+                token:
+                  type: string
+                  description: Password reset token from email
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: New password
+                password_confirmation:
+                  type: string
+                  format: password
+                  description: Password confirmation
+            examples:
+              basic:
+                value:
+                  token: "abc123def456"
+                  password: "NewSecurePass123"
+                  password_confirmation: "NewSecurePass123"
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Password has been reset successfully"
+                    data: {}
+        '400':
+          description: Invalid token or password validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token authentication (valid for 1 hour)
+    SessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_token
+      description: Session token cookie authentication
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+        - password_confirmation
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9_-]+$'
+          description: Unique username (alphanumeric, underscore, hyphen)
+          example: "john_doe"
+        email:
+          type: string
+          format: email
+          maxLength: 100
+          description: Valid email address
+          example: "john@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: Password (minimum 8 characters, must contain letters and numbers)
+          example: "SecurePass123"
+        password_confirmation:
+          type: string
+          format: password
+          description: Password confirmation (must match password)
+          example: "SecurePass123"
+
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username for login
+          example: "john_doe"
+        email:
+          type: string
+          format: email
+          description: Email for login (alternative to username)
+          example: "john@example.com"
+        password:
+          type: string
+          format: password
+          description: User password
+          example: "SecurePass123"
+      required:
+        - password
+      oneOf:
+        - required: [username]
+        - required: [email]
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          description: Valid refresh token
+          example: "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4..."
+
+    AuthSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+          example: "success"
+        message:
+          type: string
+          example: "Login successful"
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/UserBasicInfo'
+            access_token:
+              type: string
+              description: JWT access token (expires in 1 hour)
+            refresh_token:
+              type: string
+              description: Refresh token (expires in 7 days)
+            expires_in:
+              type: integer
+              description: Token expiration time in seconds
+              example: 3600
+
+    TokenResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: New JWT access token
+            refresh_token:
+              type: string
+              description: New refresh token
+            expires_in:
+              type: integer
+              description: Token expiration time in seconds
+
+    UserProfileResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/UserProfile'
+
+    UserBasicInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: "john_doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        role:
+          type: string
+          description: Primary role name
+          example: "user"
+        created_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        line_id:
+          type: string
+          nullable: true
+        discord_id:
+          type: string
+          nullable: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              code:
+                type: string
+              level:
+                type: integer
+        permissions:
+          type: array
+          items:
+            type: string
+          description: List of permission codes
+        created_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
+          description: Human-readable error message
+        errors:
+          type: object
+          additionalProperties: true
+          description: Detailed validation errors or error context

@@ -1,0 +1,130 @@
+openapi: 3.0.0
+info:
+  title: Reward System API
+  version: 1.0.0
+  description: Reward processing, approval, and distribution
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /rewards:
+    get:
+      tags: [Rewards]
+      summary: List rewards
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, distributed, cancelled, failed]
+      responses:
+        '200':
+          description: Reward list
+    
+    post:
+      tags: [Rewards]
+      summary: Create reward manually
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RewardCreateRequest'
+      responses:
+        '200':
+          description: Reward created
+
+  /rewards/{id}/approve:
+    post:
+      tags: [Rewards]
+      summary: Approve reward
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Reward approved
+
+  /rewards/{id}/mark-distributed:
+    post:
+      tags: [Rewards]
+      summary: Mark reward as distributed
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Reward marked distributed
+
+  /rewards/statistics:
+    get:
+      tags: [Rewards]
+      summary: Get reward statistics
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RewardStatistics'
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Token
+
+  schemas:
+    RewardCreateRequest:
+      type: object
+      required:
+        - user_id
+        - server_id
+        - reward_type
+        - reward_name
+        - reward_amount
+      properties:
+        user_id:
+          type: integer
+        server_id:
+          type: integer
+        promotion_id:
+          type: integer
+        reward_type:
+          type: string
+        reward_name:
+          type: string
+        reward_amount:
+          type: integer
+
+    RewardStatistics:
+      type: object
+      properties:
+        total_rewards:
+          type: integer
+        pending_count:
+          type: integer
+        approved_count:
+          type: integer
+        distributed_count:
+          type: integer
+        failed_count:
+          type: integer

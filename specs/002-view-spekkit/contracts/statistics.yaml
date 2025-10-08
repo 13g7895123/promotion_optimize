@@ -1,0 +1,85 @@
+openapi: 3.0.0
+info:
+  title: Statistics & Analytics API
+  version: 1.0.0
+  description: Dashboard statistics and reporting endpoints
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /statistics/dashboard:
+    get:
+      tags: [Statistics]
+      summary: Get dashboard statistics
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      total_users:
+                        type: integer
+                      total_servers:
+                        type: integer
+                      total_promotions:
+                        type: integer
+                      total_rewards:
+                        type: integer
+                      active_promotions:
+                        type: integer
+                      pending_rewards:
+                        type: integer
+
+  /statistics/promotions:
+    get:
+      tags: [Statistics]
+      summary: Get promotion statistics
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: server_id
+          in: query
+          schema:
+            type: integer
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+      responses:
+        '200':
+          description: Promotion stats
+
+  /statistics/server-comparison:
+    get:
+      tags: [Statistics]
+      summary: Compare server performance
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: server_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        '200':
+          description: Comparison data
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Token

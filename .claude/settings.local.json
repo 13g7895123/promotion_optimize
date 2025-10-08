@@ -39,7 +39,23 @@
       "Bash(docker compose logs:*)",
       "Bash(del \"D:\\Jarvis\\10_idea\\promotion\\admin_template\\package.json.new\")",
       "Bash(cp:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(docker logs:*)",
+      "Bash(./test.sh:*)",
+      "Bash(docker ps:*)",
+      "Bash(source:*)",
+      "Bash(echo \"Redis Port: $REDIS_PORT\")",
+      "Bash(cat:*)",
+      "Bash(python3:*)",
+      "Bash(git reset:*)",
+      "Bash(echo \"DB_ROOT_PASSWORD: $DB_ROOT_PASSWORD\")",
+      "Bash(mysql:*)",
+      "Bash(netstat:*)",
+      "Bash(ss -tuln)",
+      "Bash(timeout 30 npm run typecheck)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh:*)"
     ],
     "deny": []
   }

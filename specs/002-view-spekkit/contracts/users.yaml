@@ -1,0 +1,985 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: |
+    User management endpoints for the Game Server Promotion Platform.
+    Handles user CRUD operations, role assignments, and user profile management.
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.promotion-platform.com/v1
+    description: Production server
+
+paths:
+  /users:
+    get:
+      summary: List all users
+      description: Retrieve paginated list of users with optional filtering
+      operationId: listUsers
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: search
+          in: query
+          description: Search by username or email
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: Filter by role code
+          schema:
+            type: string
+            enum: [super_admin, admin, server_owner, reviewer, user]
+        - name: status
+          in: query
+          description: Filter by account status
+          schema:
+            type: string
+            enum: [active, inactive, locked]
+        - name: sort_by
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [created_at, last_login, username, email]
+            default: created_at
+        - name: sort_order
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Users retrieved successfully"
+                    data:
+                      users:
+                        - id: 1
+                          username: "john_doe"
+                          email: "john@example.com"
+                          full_name: "John Doe"
+                          roles: ["server_owner"]
+                          status: "active"
+                          created_at: "2025-10-08T10:30:00Z"
+                          last_login: "2025-10-08T14:30:00Z"
+                        - id: 2
+                          username: "jane_smith"
+                          email: "jane@example.com"
+                          full_name: "Jane Smith"
+                          roles: ["user"]
+                          status: "active"
+                          created_at: "2025-10-07T09:15:00Z"
+                          last_login: "2025-10-08T12:00:00Z"
+                      pagination:
+                        current_page: 1
+                        total_pages: 5
+                        total_items: 95
+                        items_per_page: 20
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new user
+      description: Create a new user account (admin only)
+      operationId: createUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+            examples:
+              basic:
+                value:
+                  username: "new_user"
+                  email: "newuser@example.com"
+                  password: "SecurePass123"
+                  full_name: "New User"
+                  roles: [5]
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "User created successfully"
+                    data:
+                      user:
+                        id: 3
+                        username: "new_user"
+                        email: "newuser@example.com"
+                        full_name: "New User"
+                        roles:
+                          - id: 5
+                            name: "User"
+                            code: "user"
+                        status: "active"
+                        created_at: "2025-10-08T15:00:00Z"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      description: Retrieve detailed information about a specific user
+      operationId: getUserById
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "User retrieved successfully"
+                    data:
+                      user:
+                        id: 1
+                        username: "john_doe"
+                        email: "john@example.com"
+                        full_name: "John Doe"
+                        phone: "+886912345678"
+                        line_id: "john_line"
+                        discord_id: "john#1234"
+                        avatar: "https://cdn.example.com/avatars/john.jpg"
+                        roles:
+                          - id: 3
+                            name: "Server Owner"
+                            code: "server_owner"
+                            level: 3
+                        status: "active"
+                        created_at: "2025-10-08T10:30:00Z"
+                        updated_at: "2025-10-08T14:30:00Z"
+                        last_login: "2025-10-08T14:30:00Z"
+                        login_attempts: 0
+                        locked_until: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update user
+      description: Update user information (admin or self)
+      operationId: updateUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+            examples:
+              basic:
+                value:
+                  full_name: "John Updated Doe"
+                  phone: "+886987654321"
+                  line_id: "john_new_line"
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete user
+      description: Soft delete user account (admin only)
+      operationId: deleteUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "User deleted successfully"
+                    data: {}
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}/roles:
+    get:
+      summary: Get user roles
+      description: Retrieve all roles assigned to a user
+      operationId: getUserRoles
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User roles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      roles:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Role'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "User roles retrieved"
+                    data:
+                      roles:
+                        - id: 3
+                          name: "Server Owner"
+                          code: "server_owner"
+                          level: 3
+                          assigned_at: "2025-10-08T10:30:00Z"
+                          assigned_by: 1
+                          expires_at: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Assign role to user
+      description: Add one or more roles to a user (admin only)
+      operationId: assignRoleToUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRoleRequest'
+            examples:
+              single_role:
+                value:
+                  role_id: 3
+                  expires_at: null
+              multiple_roles:
+                value:
+                  role_ids: [3, 4]
+      responses:
+        '200':
+          description: Role assigned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Role assigned successfully"
+                    data:
+                      user_id: 1
+                      roles_assigned: [3, 4]
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}/roles/{roleId}:
+    delete:
+      summary: Remove role from user
+      description: Remove a specific role from a user (admin only)
+      operationId: removeRoleFromUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+        - name: roleId
+          in: path
+          required: true
+          description: Role ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Role removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Role removed successfully"
+                    data: {}
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}/unlock:
+    post:
+      summary: Unlock user account
+      description: Unlock a locked user account (admin only)
+      operationId: unlockUser
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User unlocked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "User account unlocked successfully"
+                    data: {}
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}/change-password:
+    post:
+      summary: Change user password
+      description: Change password for a specific user (admin or self)
+      operationId: changeUserPassword
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+            examples:
+              basic:
+                value:
+                  current_password: "OldPass123"
+                  new_password: "NewSecurePass456"
+                  new_password_confirmation: "NewSecurePass456"
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Password changed successfully"
+                    data: {}
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/{id}/avatar:
+    post:
+      summary: Upload user avatar
+      description: Upload or update user avatar image
+      operationId: uploadAvatar
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+        - SessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+                  description: Avatar image file (JPG, PNG, GIF, max 5MB)
+      responses:
+        '200':
+          description: Avatar uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      avatar_url:
+                        type: string
+              examples:
+                success:
+                  value:
+                    status: "success"
+                    message: "Avatar uploaded successfully"
+                    data:
+                      avatar_url: "https://cdn.example.com/avatars/user_1_1696752000.jpg"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    SessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_token
+
+  schemas:
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+        full_name:
+          type: string
+          maxLength: 100
+        phone:
+          type: string
+          maxLength: 20
+        line_id:
+          type: string
+          maxLength: 50
+        discord_id:
+          type: string
+          maxLength: 50
+        roles:
+          type: array
+          items:
+            type: integer
+          description: Array of role IDs to assign
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 100
+        phone:
+          type: string
+          maxLength: 20
+        line_id:
+          type: string
+          maxLength: 50
+        discord_id:
+          type: string
+          maxLength: 50
+        status:
+          type: string
+          enum: [active, inactive, locked]
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - current_password
+        - new_password
+        - new_password_confirmation
+      properties:
+        current_password:
+          type: string
+          format: password
+        new_password:
+          type: string
+          format: password
+          minLength: 8
+        new_password_confirmation:
+          type: string
+          format: password
+
+    AssignRoleRequest:
+      type: object
+      properties:
+        role_id:
+          type: integer
+          description: Single role ID to assign
+        role_ids:
+          type: array
+          items:
+            type: integer
+          description: Multiple role IDs to assign
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Optional role expiration date
+      oneOf:
+        - required: [role_id]
+        - required: [role_ids]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        full_name:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        line_id:
+          type: string
+          nullable: true
+        discord_id:
+          type: string
+          nullable: true
+        avatar:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive, locked]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserWithRoles:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            roles:
+              type: array
+              items:
+                $ref: '#/components/schemas/Role'
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        level:
+          type: integer
+        assigned_at:
+          type: string
+          format: date-time
+        assigned_by:
+          type: integer
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            users:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  full_name:
+                    type: string
+                    nullable: true
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  last_login:
+                    type: string
+                    format: date-time
+                    nullable: true
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    UserResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/UserWithRoles'
+
+    UserDetailResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            user:
+              allOf:
+                - $ref: '#/components/schemas/UserWithRoles'
+                - type: object
+                  properties:
+                    login_attempts:
+                      type: integer
+                    locked_until:
+                      type: string
+                      format: date-time
+                      nullable: true
+
+    Pagination:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        total_pages:
+          type: integer
+        total_items:
+          type: integer
+        items_per_page:
+          type: integer
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        message:
+          type: string
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties: true
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - no valid authentication
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            unauthorized:
+              value:
+                status: "error"
+                message: "Unauthorized access"
+                errors: {}
+
+    ForbiddenError:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            forbidden:
+              value:
+                status: "error"
+                message: "You do not have permission to perform this action"
+                errors: {}
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            not_found:
+              value:
+                status: "error"
+                message: "User not found"
+                errors: {}
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            validation_error:
+              value:
+                status: "error"
+                message: "Validation failed"
+                errors:
+                  email: ["Email is already in use"]
+                  password: ["Password must be at least 8 characters"]
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            server_error:
+              value:
+                status: "error"
+                message: "An unexpected error occurred"
+                errors: {}

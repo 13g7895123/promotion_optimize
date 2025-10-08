@@ -1,0 +1,152 @@
+openapi: 3.0.0
+info:
+  title: Promotion System API
+  version: 1.0.0
+  description: Promotion link generation, tracking, and analytics
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /promotions:
+    get:
+      tags: [Promotions]
+      summary: List user promotions
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Promotion list
+    
+    post:
+      tags: [Promotions]
+      summary: Create promotion link
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - server_id
+              properties:
+                server_id:
+                  type: integer
+      responses:
+        '200':
+          description: Promotion created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Promotion'
+
+  /promotions/{id}:
+    get:
+      tags: [Promotions]
+      summary: Get promotion details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Promotion details
+
+  /promotions/{id}/analytics:
+    get:
+      tags: [Promotions]
+      summary: Get promotion analytics
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Analytics data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromotionAnalytics'
+
+  /promotions/track/{code}:
+    get:
+      tags: [Promotions]
+      summary: Track promotion click
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Click tracked
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Token
+
+  schemas:
+    Promotion:
+      type: object
+      properties:
+        id:
+          type: integer
+        promotion_code:
+          type: string
+        promotion_link:
+          type: string
+        qr_code_url:
+          type: string
+        status:
+          type: string
+        click_count:
+          type: integer
+        unique_click_count:
+          type: integer
+        conversion_count:
+          type: integer
+
+    PromotionAnalytics:
+      type: object
+      properties:
+        total_clicks:
+          type: integer
+        unique_clicks:
+          type: integer
+        conversions:
+          type: integer
+        conversion_rate:
+          type: number
+        clicks_by_date:
+          type: array
+          items:
+            type: object
+        referrer_analysis:
+          type: object
